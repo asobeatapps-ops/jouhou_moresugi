@@ -9,7 +9,8 @@
     "test:audio-browser": "node tests/audio-browser.cjs",
     "test:keyboard": "node tests/keyboard.cjs",
     "test:touch-browser": "node tests/touch-browser.cjs",
-    "test:office-updates": "node tests/office-updates-browser.cjs"
+    "test:office-updates": "node tests/office-updates-browser.cjs",
+    "test:intro-hints": "node tests/intro-hints-browser.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"

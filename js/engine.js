@@ -1,16 +1,16 @@
-import {OBJECT_BY_ID,APP_ACTIONS,DROP_TARGETS,ENDING_COUNT} from './data.js?v=office-6';
-import {ButtonPhysics,crossesRect} from './button-physics.js?v=office-6';
+import {OBJECT_BY_ID,APP_ACTIONS,DROP_TARGETS,ENDING_COUNT,ENDS} from './data.js?v=office-7';
+import {ButtonPhysics,crossesRect} from './button-physics.js?v=office-7';
 const APPS=new Set(APP_ACTIONS.map(a=>a.id));
-const HOLDS={send:1500,'app-lock':1200,'app-verify':1500,button:1000};
+const HOLDS={send:1500,'app-lock':1200,'app-verify':1500};
 export class OfficeEngine{
  constructor({onEvent=()=>{}}={}){this.onEvent=onEvent;this.mode='idle';this.token=0;this.serial=0;this.press=null;this.paused=false;this.endId=null}
  emit(type,data={}){this.onEvent({type,...data})}
  start({discovered=[]}={},now=0){
-  this.loose=null;this.looseWasPicked=false;this.lastLooseMove=null;this.throwVelocity=null;this.room={w:720,h:1100,button:{x:595,y:140,r:32},targets:{}};this.lastPhysics=now;this.serial++;this.token++;this.mode='explore';this.paused=false;this.endId=null;this.press=null;this.panel=null;this.actions=0;this.bossTaps=0;this.sendTaps=0;this.lockTaps=0;this.lastSendTap=null;this.giant=false;this.buttonTaps=0;this.doorOpen=false;this.drawerOpen=false;this.portalOpen=false;this.folderOpen=false;this.verifying=false;
-  this.trueEligible=Array.from({length:14},(_,i)=>i+1).every(id=>discovered.includes(id));this.phaseStarted=now;this.deadline=null;this.flash=null;
+  this.loose=null;this.looseWasPicked=false;this.lastLooseMove=null;this.throwVelocity=null;this.room={w:720,h:1100,button:{x:595,y:140,r:32},targets:{}};this.lastPhysics=now;this.serial++;this.token++;this.mode='explore';this.paused=false;this.endId=null;this.press=null;this.panel=null;this.actions=0;this.bossTaps=0;this.sendTaps=0;this.lockTaps=0;this.lastSendTap=null;this.buttonTaps=0;this.doorOpen=false;this.drawerOpen=false;this.portalOpen=false;this.folderOpen=false;this.verifying=false;
+  this.trueEligible=ENDS.filter(e=>e.id!==15).every(e=>discovered.includes(e.id));this.phaseStarted=now;this.deadline=null;this.flash=null;
   this.emit('start');this.notice(this.trueEligible?'オフィスにいる「あなた」が、少し光っている。':'気になる物をタップ。猫や資料は、つかんだまま運べます。');
  }
- valid(id){return (id==='looseButton'?!!this.loose:!!OBJECT_BY_ID[id])||(APPS.has(id)&&this.panel==='desktop')||(id==='send'&&this.panel==='mail')}
+ valid(id){return (id==='looseButton'?!!this.loose:id==='button'?!this.loose:!!OBJECT_BY_ID[id])||(APPS.has(id)&&this.panel==='desktop')||(id==='send'&&this.panel==='mail')}
  ready(token=this.token){return this.mode==='explore'&&!this.paused&&!this.endId&&token===this.token}
  notice(text,object=null){this.emit('notice',{text,object})}
  targetsFor(id){return DROP_TARGETS[id]||[]}
@@ -18,7 +18,7 @@ export class OfficeEngine{
   if(!this.ready(token)||!this.valid(id)||this.press)return false;
   if(id==='looseButton'){this.looseWasPicked=true;this.lastLooseMove=null;this.throwVelocity=null;this.loose.held=true;this.loose.vx=this.loose.vy=0}this.press={id,at:now,pointerId,token,dragging:false};if(OBJECT_BY_ID[id]&&this.panel){this.panel=null;this.emit('panel')}this.emit('press',{id});return true;
  }
- movePress(pointerId,token=this.token){if(!this.ready(token)||this.press?.pointerId!==pointerId||!OBJECT_BY_ID[this.press.id]?.draggable)return false;this.press.dragging=true;if(this.press.id==='button'&&!this.giant){this.detach();this.press.id='looseButton'}return true}
+ movePress(pointerId,token=this.token){if(!this.ready(token)||this.press?.pointerId!==pointerId||!OBJECT_BY_ID[this.press.id]?.draggable)return false;this.press.dragging=true;if(this.press.id==='button'&&!this.loose){this.detach();this.press.id='looseButton'}return true}
  cancelPress(){if(this.loose?.held){this.loose.release();this.loose.armed=false}this.press=null}
  release(now,pointerId,token=this.token){
   if(!this.ready(token)||this.press?.pointerId!==pointerId||this.press.token!==token)return false;this.tick(now);if(!this.ready(token)||!this.press)return false;
@@ -36,8 +36,8 @@ export class OfficeEngine{
   else if(id==='trash'){this.panel=null;this.notice('紙くずのゴミ箱。大切な物まで捨てないように。',id)}
   else if(id==='window'){this.panel=null;this.notice('外は広い世界。資料を近づけたら、風で飛んでいきそう。',id)}
   else if(id==='looseButton'){this.loose.release(75,-90);this.notice('ころころ…。拾って、窓やゴミ箱へ投げられそう。',id)}
-  else if(id==='button'){this.panel=null;if(this.giant){this.finish(9,now);return true}if(++this.buttonTaps>=2){this.reveal(now);return true}this.notice('ボタンが少しぐらつく。引っ張るか、長く押してみよう。',id)}
-  else if(id==='self'){this.panel=null;if(this.trueEligible){this.finish(15,now);return true}this.notice('あなたの名札。ほかの14の結末を見つけたら、何かが変わるかも。',id)}
+  else if(id==='button'){this.panel=null;if(++this.buttonTaps>=3){this.finish(9,now);return true}this.notice('壁のボタンが反応した。繰り返し触るか、つかんで外してみよう。',id)}
+  else if(id==='self'){this.panel=null;if(this.trueEligible){this.finish(15,now);return true}this.notice('あなたの名札。ほかの16の結末を見つけたら、何かが変わるかも。',id)}
   else if(id==='app-mail'){this.panel='mail';this.emit('panel');this.notice('送信ボタンは、押し方で反応が変わりそう。','pc')}
   else if(id==='app-ai'){this.finish(6,now);return true}
   else if(id==='app-lock'){if(++this.lockTaps>=3){this.finish(4,now);return true}this.notice(this.lockTaps===1?'まずは自分のPCをロック。長く押すと、もっと強く守れそう。':'今度は部署ごとロック。慎重すぎるのも考えもの。','pc')}
@@ -54,10 +54,6 @@ export class OfficeEngine{
   if(!this.ready(token)||this.press?.pointerId!==pointerId||this.press.token!==token||this.press.id!==source||!this.press.dragging)return false;
   this.press=null;this.panel=null;this.lastSendTap=null;
   if(source==='looseButton'){this.actions++;this.token++;const v=now-(this.lastLooseMove?.at??-Infinity)<120?this.throwVelocity:null;this.loose.release(v?.x||45,v?.y||0);this.loose.armed=this.looseWasPicked||Math.hypot(delta.x,delta.y)>80;this.throwVelocity=null;if(target==='window')this.finish(16,now);else if(target==='trash')this.finish(17,now);else{this.notice('ころころ…。床に落ちても、つかんで投げ直せます。','looseButton');this.emit('change')}return true}
-  if(source==='button'){
-   if(!this.giant&&Math.hypot(delta.x,delta.y)>=60){this.actions++;this.token++;this.reveal(now);return true}
-   this.notice('壁のボタンを、もう少し大きく引っ張ってみよう。','button');this.emit('change');return false;
-  }
   if(!this.targetsFor(source).includes(target)){this.notice(target?'そこには置けなかった。別の場所も試してみよう。':'元の場所にそっと戻した。',source);this.emit('change');return false}
   this.actions++;this.token++;this.flash={id:target,at:now};
   if(source==='cat'&&target==='pc')this.finish(7,now);
@@ -69,19 +65,18 @@ export class OfficeEngine{
   }
   if(!this.endId)this.emit('change');return true;
  }
- reveal(now){this.giant=true;this.press=null;this.panel=null;this.flash={id:'button',at:now};this.notice('奥から、もっと大きなボタンが！触れたら何か起こりそう。','button');this.emit('change')}
  setRoom(layout){
   const q=720/layout.w,old=this.room;this.roomScale=q;this.room={w:720,h:layout.h*q,button:{x:(layout.boxes.button.x+layout.boxes.button.w/2)*q,y:(layout.boxes.button.y+layout.boxes.button.h/2)*q,r:Math.max(18,32*layout.k*q)},targets:{}};
   for(const id of['window','trash']){const b=layout.boxes[id];this.room.targets[id]={x:b.x*q,y:b.y*q,w:b.w*q,h:(id==='trash'?b.h*.28:b.h)*q}}
   if(this.loose){if(old&&old.h!==this.room.h&&!this.loose.held)this.loose.y*=this.room.h/old.h;this.loose.bounds(720,this.room.h)}
  }
- detach(){const b=this.room.button;this.loose=new ButtonPhysics(b.x,b.y,b.r);this.loose.bounds(720,this.room.h);this.giant=true;this.panel=null;this.notice('ぽこっ！外れたボタンは窓やゴミ箱へ。奥の大きなボタンも気になる。','looseButton');this.emit('change')}
+ detach(){const b=this.room.button;this.loose=new ButtonPhysics(b.x,b.y,b.r);this.loose.bounds(720,this.room.h);this.panel=null;this.notice('ぽこっ！外れたボタンは窓やゴミ箱へ。床に落ちても拾えます。','looseButton');this.emit('change')}
  moveLoose(point,now){if(!this.loose||this.press?.id!=='looseButton')return;const q=this.roomScale||1;const x=point.x*q,y=point.y*q,prev=this.lastLooseMove;this.throwVelocity=prev&&now>prev.at&&now-prev.at<120?{x:(x-prev.x)/(now-prev.at)*1000,y:(y-prev.y)/(now-prev.at)*1000}:{x:0,y:0};this.lastLooseMove={x,y,at:now};this.loose.hold(x,y)}
  tick(now){
   const dt=(now-this.lastPhysics)/1000;this.lastPhysics=now;if(this.paused)return;
   if(this.mode==='explore'&&this.loose){this.loose.step(dt);if(this.loose.armed&&!this.loose.held)for(const[id,rect]of Object.entries(this.room.targets)){if(this.loose.path.some(([a,b])=>crossesRect(a,b,rect))){this.finish(id==='window'?16:17,now);break}}}
 
-  if(this.mode==='explore'&&this.press&&!this.press.dragging){const p=this.press,threshold=HOLDS[p.id];if(threshold&&now-p.at>=threshold){this.press=null;this.actions++;this.token++;if(p.id==='send')this.finish(1,now);else if(p.id==='app-lock')this.finish(10,now);else if(p.id==='app-verify')this.finish(11,now);else if(p.id==='button'){if(this.giant)this.finish(9,now);else this.reveal(now)}}}
+  if(this.mode==='explore'&&this.press&&!this.press.dragging){const p=this.press,threshold=HOLDS[p.id];if(threshold&&now-p.at>=threshold){this.press=null;this.actions++;this.token++;if(p.id==='send')this.finish(1,now);else if(p.id==='app-lock')this.finish(10,now);else if(p.id==='app-verify')this.finish(11,now);}}
   if(this.mode==='ending'&&now>=this.deadline){this.mode='result';this.emit('result',{id:this.endId})}
  }
  holdProgress(now){const p=this.press;return p&&!p.dragging&&HOLDS[p.id]?Math.max(0,Math.min(1,(now-p.at)/HOLDS[p.id])):0}
