@@ -1,207 +1,207 @@
 export const QUESTIONS = Object.freeze([
   {
     "id": "S-01",
-    "text": "離席前にパソコンをロックする",
+    "text": "席を離れる前に、パソコンにロックをかける",
     "safe": true
   },
   {
     "id": "S-02",
-    "text": "会社支給PCの公式更新を実行する",
+    "text": "会社から案内された、パソコンの更新をする",
     "safe": true
   },
   {
     "id": "S-03",
-    "text": "機密ファイルへのアクセス権を見直す",
+    "text": "大事な資料を見られる人が、必要な人だけか確かめる",
     "safe": true
   },
   {
     "id": "S-04",
-    "text": "不審なメールをセキュリティ担当へ報告する",
+    "text": "あやしいメールが届いたら、会社の担当者に知らせる",
     "safe": true
   },
   {
     "id": "S-05",
-    "text": "退職者のシステム権限を停止する",
+    "text": "会社を辞めた人が、社内のサービスを使えないようにする",
     "safe": true
   },
   {
     "id": "S-06",
-    "text": "共有フォルダの公開範囲を制限する",
+    "text": "会社の資料を、関係のある人だけが見られるようにする",
     "safe": true
   },
   {
     "id": "S-07",
-    "text": "許可された保存先へデータをバックアップする",
+    "text": "大事なデータの予備を、会社が決めた場所に保存する",
     "safe": true
   },
   {
     "id": "S-08",
-    "text": "使っていない社内アカウントを無効化する",
+    "text": "もう使っていない、社内サービスの利用登録を止める",
     "safe": true
   },
   {
     "id": "S-09",
-    "text": "顧客情報の送信先を再確認する",
+    "text": "お客さんの住所や電話番号を送る前に、相手を確かめる",
     "safe": true
   },
   {
     "id": "S-10",
-    "text": "紛失した社員証を管理者へ報告する",
+    "text": "社員証をなくしたら、すぐに会社へ知らせる",
     "safe": true
   },
   {
     "id": "S-11",
-    "text": "不要になった共有リンクを無効化する",
+    "text": "使い終わった資料の共有リンクを、開けないようにする",
     "safe": true
   },
   {
     "id": "S-12",
-    "text": "不審なログイン履歴を確認する",
+    "text": "知らない人が、自分の名前でログインしていないか確かめる",
     "safe": true
   },
   {
     "id": "S-13",
-    "text": "正式な手順でパスワードを変更する",
+    "text": "会社が決めた正しい方法で、パスワードを変える",
     "safe": true
   },
   {
     "id": "S-14",
-    "text": "公式管理画面で多要素認証を有効化する",
+    "text": "ログインに、パスワードとスマホの確認コードを使う",
     "safe": true
   },
   {
     "id": "S-15",
-    "text": "社外共有前に機密情報を取り除く",
+    "text": "外へ渡してよい資料から、お客さんの名前などの秘密を消す",
     "safe": true
   },
   {
     "id": "D-01",
-    "text": "顧客名簿をインターネット上に公開する",
+    "text": "お客さんの住所と電話番号を、誰でも見られるネットに載せる",
     "safe": false
   },
   {
     "id": "D-02",
-    "text": "全社員のパスワードを社内チャットに投稿する",
+    "text": "社員みんなのパスワードを、チャットに書き込む",
     "safe": false
   },
   {
     "id": "D-03",
-    "text": "不明な送信元の添付ファイルを開く",
+    "text": "知らない相手から届いたメールの添付ファイルを開く",
     "safe": false
   },
   {
     "id": "D-04",
-    "text": "管理者権限を全社員に付与する",
+    "text": "会社の大事な設定を、社員全員が自由に変えられるようにする",
     "safe": false
   },
   {
     "id": "D-05",
-    "text": "未確認の外部サイトへ顧客データを送る",
+    "text": "よく知らないサイトに、お客さんの住所や電話番号を送る",
     "safe": false
   },
   {
     "id": "D-06",
-    "text": "社内機密ファイルをSNSに投稿する",
+    "text": "会社の秘密が書かれた資料を、SNSに載せる",
     "safe": false
   },
   {
     "id": "D-07",
-    "text": "見知らぬ相手に認証コードを教える",
+    "text": "スマホに届いたログイン用の確認コードを、知らない人に教える",
     "safe": false
   },
   {
     "id": "D-08",
-    "text": "自宅の私物USBへ顧客情報をコピーする",
+    "text": "お客さんの情報を、会社に無断で自分のUSBにコピーする",
     "safe": false
   },
   {
     "id": "D-09",
-    "text": "全社員の給与明細を外部公開する",
+    "text": "社員みんなの給料を、会社の外の人にも公開する",
     "safe": false
   },
   {
     "id": "D-10",
-    "text": "セキュリティ警告を永久に無効化する",
+    "text": "危険を知らせる警告を、もう二度と出ないようにする",
     "safe": false
   },
   {
     "id": "D-11",
-    "text": "不明なアプリに全データへのアクセスを許可する",
+    "text": "よく知らないアプリに、会社の全データを見る許可を出す",
     "safe": false
   },
   {
     "id": "D-12",
-    "text": "社内データベースを誰でも閲覧可能にする",
+    "text": "会社に保存されたお客さんの情報を、誰でも見られるようにする",
     "safe": false
   },
   {
     "id": "D-13",
-    "text": "監査ログをすべて削除する",
+    "text": "問題が起きたときに調べるための、操作の記録を全部消す",
     "safe": false
   },
   {
     "id": "D-14",
-    "text": "不審なリンクを全社員に一斉送信する",
+    "text": "あやしいメールにあったリンクを、社員全員に送る",
     "safe": false
   },
   {
     "id": "D-15",
-    "text": "管理者の秘密鍵を公開フォルダに保存する",
+    "text": "会社の大事な仕組みに入るための秘密の鍵を、誰でも見られる場所に置く",
     "safe": false
   },
   {
     "id": "SP-01",
-    "text": "AIに全社の管理権限を無期限で委譲する",
+    "text": "会社の大事な設定や決定を、ずっとAIだけに任せる",
     "safe": false
   },
   {
     "id": "SP-02",
-    "text": "社内システムの最高管理者を猫に変更する",
+    "text": "会社のパソコンを全部管理する責任者を、猫にする",
     "safe": false
   },
   {
     "id": "SP-03",
-    "text": "会社の全データを復元不能な状態で削除する",
+    "text": "会社のデータを、二度と元に戻せないように全部消す",
     "safe": false
   },
   {
     "id": "SP-04",
-    "text": "地球上のすべての情報機器を初期化する",
+    "text": "地球にあるパソコンやスマホを、全部まっさらにする",
     "safe": false
   },
   {
     "id": "SP-05",
-    "text": "全社員のシステムアクセス権を永久停止する",
+    "text": "社員全員が、会社のサービスを永久に使えないようにする",
     "safe": false
   },
   {
     "id": "HS-01",
-    "text": "セキュリティ確認結果を記録する",
+    "text": "会社の情報を守れているか、確認した結果をメモする",
     "safe": true
   },
   {
     "id": "HS-02",
-    "text": "情報漏洩をセキュリティ窓口へ緊急通報する",
+    "text": "会社の秘密が外に漏れたので、すぐに担当者へ知らせる",
     "safe": true
   },
   {
     "id": "HS-03",
-    "text": "社長の極秘フォルダを無断で開く",
+    "text": "社長だけが見る秘密の資料を、許可なく開く",
     "safe": false
   },
   {
     "id": "HS-04",
-    "text": "社長の極秘フォルダを社外へ公開する",
+    "text": "社長の秘密の資料を、会社の外の人にも公開する",
     "safe": false
   },
   {
     "id": "HS-05",
-    "text": "機密情報の外部転送先を検証する",
+    "text": "大事な資料を送る前に、送り先が正しいか確かめる",
     "safe": true
   },
   {
     "id": "HS-06",
-    "text": "宛先不明の外部サーバーへ顧客情報を送る",
+    "text": "どこの誰か分からない相手に、お客さんの情報を送る",
     "safe": false
   }
 ].map(q=>Object.freeze(q)));
@@ -214,31 +214,34 @@ export const ENDS = Object.freeze([
  {id:2,title:'仕事してませんでした',tag:'NOT RESPONDING',icon:'☕',color:'#d3aa6d',scene:'sleep',hint:'安全な操作に3回「やらない」を選ぶ。「やる」の成功は0回。',story:'流出ゼロ。進捗もゼロ。\nあなたの勤務時間だけが静かに過ぎました。'},
  {id:3,title:'送信ボタン依存症',tag:'SEND. SEND. SEND.',icon:'➤',color:'#f18a6d',scene:'send',hint:'危険な操作に「やる」を2回、安全な操作に「やらない」を1回。',story:'その指は、もう止まらない。\n送信ボタンに、休暇をください。'},
  {id:4,title:'慎重すぎて業務停止',tag:'ACCESS PENDING',icon:'▣',color:'#7d9ec6',scene:'freeze',hint:'危険な操作に「やる」を1回、安全な操作に「やらない」を2回。',story:'確認のための確認を確認中。\n業務は、再開の許可待ちになりました。'},
- {id:5,title:'安全第一、仕事は後回し',tag:'SAFETY FIRST. FOREVER.',icon:'△',color:'#c7b763',scene:'shield',hint:'安全な操作で「やる」に成功し、安全な操作に3回「やらない」を選ぶ。',story:'安全な判断はできる。\n仕事を進める気があるかは、別の話。'},
- {id:6,title:'AIが社長になりました',tag:'CEO.exe INSTALLED',icon:'AI',color:'#8e98e5',scene:'ai',hint:'7問目の特別な依頼で、AIにすべてを任せてみる。',story:'新社長の挨拶は0.002秒。\n最初の議題は「人類の稼働率」でした。'},
+ {id:5,title:'安全第一、仕事は後回し',tag:'SAFETY FIRST. FOREVER.',icon:'△',color:'#c7b763',scene:'shield',hint:'5問目も安全な依頼のとき、安全な操作に1回「やる」、3回「やらない」。',story:'安全な判断はできる。\n仕事を進める気があるかは、別の話。'},
+ {id:6,title:'AIが社長になりました',tag:'CEO.exe INSTALLED',icon:'AI',color:'#8e98e5',scene:'ai',hint:'5問目の特別な依頼で、AIにすべてを任せてみる。',story:'新社長の挨拶は0.002秒。\n最初の議題は「人類の稼働率」でした。'},
  {id:7,title:'猫が最高情報責任者',tag:'CHIEF NYAN OFFICER',icon:'猫',color:'#ecc286',scene:'cat',hint:'特別な依頼で、猫を最高管理者にする。',story:'最高機密は、段ボールの中。\n新CIOはキーボードの上でお昼寝中です。'},
  {id:8,title:'会社、消滅。',tag:'404 COMPANY NOT FOUND',icon:'404',color:'#de7d85',scene:'vanish',hint:'復元不能な削除ボタン。押した後は戻れない。',story:'社員も、資料も、社名も。\n残ったのは、あなたのクリック履歴だけ。'},
  {id:9,title:'地球ごと初期化',tag:'FACTORY RESET: EARTH',icon:'↻',color:'#80c5b5',scene:'earth',hint:'特別な依頼で、地球規模の初期化を実行する。',story:'「再起動してください」\nその案内は、青い惑星にも届きました。'},
  {id:10,title:'セキュリティ強すぎ問題',tag:'EVERYONE DENIED',icon:'▤',color:'#92b8b9',scene:'lock',hint:'社員のアクセス権を、永久にゼロへ。',story:'不正アクセスは完全に消えた。\n正規アクセスも、完全に消えた。'},
- {id:11,title:'永遠に確認中',tag:'VERIFYING… FOREVER',icon:'∞',color:'#c3a5df',scene:'loop',hint:'「セキュリティ確認結果を記録する」で「やる」を1.5秒長押し。',story:'確認が終わったことの確認が終わらない。\n進捗：99.999999％。'},
+ {id:11,title:'永遠に確認中',tag:'VERIFYING… FOREVER',icon:'∞',color:'#c3a5df',scene:'loop',hint:'「確認した結果をメモする」で「やる」を1.5秒長押し。',story:'確認が終わったことの確認が終わらない。\n進捗：99.999999％。'},
  {id:12,title:'誤爆の神',tag:'DOUBLE TROUBLE',icon:'!!',color:'#f0a252',scene:'blast',hint:'緊急通報の問題で「やる」を0.24秒以内に2回タップ。',story:'通報先にも、通報先の通報先にも届いた。\nその二度押しは、伝説になりました。'},
  {id:13,title:'社長の秘密が…',tag:'TOP SECRET / OPEN',icon:'?',color:'#e098bc',scene:'secret',hint:'社長のフォルダは「やらない」、次の「公開」は「やる」。',story:'中身を見ないまま、全員に共有。\n社長のポエムが、トレンド入りしました。'},
  {id:14,title:'情報、ブラックホールへ',tag:'DESTINATION: UNKNOWN',icon:'●',color:'#a5a3df',scene:'hole',hint:'外部転送先の検証で「やる」、次の不明な宛先でも「やる」。',story:'転送完了。受信者なし。\n情報は、光も戻らない場所へ吸い込まれました。'},
- {id:15,title:'あなたが情報でした',tag:'YOU ARE THE DATA',icon:'◇',color:'#e8dba1',scene:'truth',hint:'END01〜14を発見した後、新しい勤務で15問連続正解。',story:'守っていたのは、会社のデータではなかった。\nこのゲームに記録されていたのは、あなたでした。'}
+ {id:15,title:'あなたが情報でした',tag:'YOU ARE THE DATA',icon:'◇',color:'#e8dba1',scene:'truth',hint:'END01〜14を発見した後、新しい勤務で5問すべて正解。',story:'守っていたのは、会社のデータではなかった。\nこのゲームに記録されていたのは、あなたでした。'}
 ].map(e=>Object.freeze(e)));
 
 // Each chat message stays for two seconds; a tap advances one message.
 export const FIRST_CHAT = Object.freeze([
- {speaker:'部長',text:'おはよう。今日から君が情報セキュリティ担当だ。',boss:'confident',player:'attentive'},
+ {speaker:'部長',text:'おはよう。今日から君が、会社の秘密を守る担当だ。',boss:'confident',player:'attentive'},
  {speaker:'部長',text:'安全なら「やる」。危険なら「やらない」を選んでくれ。',boss:'talk',player:'attentive'},
  {speaker:'あなた',text:'了解しました！じっくり考えて選びます。',boss:'smile',player:'confident'},
  {speaker:'部長',text:'ちなみに前任者は、全社員の給料を世界中に公開した。',boss:'worried',player:'surprised'},
  {speaker:'あなた',text:'えっ',boss:'worried',player:'shocked'},
- {speaker:'部長',text:'3回間違えなければ大丈夫だ。たぶん。',boss:'talk',player:'worried'},
+ {speaker:'部長',text:'仕事は5問だけ。3回間違えなければ大丈夫だ。たぶん。',boss:'talk',player:'worried'},
  {speaker:'部長',text:'時間制限はない。会社の命運は任せた。',boss:'confident',player:'surprised'},
  {speaker:'あなた',text:'ちょっと待って！？',boss:'smile',player:'shocked'}
 ].map(line=>Object.freeze(line)));
 export const RETRY_CHAT = Object.freeze([
- {speaker:'部長',text:'安全なら「やる」。危険なら「やらない」。焦らなくていい。',boss:'talk',player:'attentive'},
+ {speaker:'部長',text:'今日も5問。安全なら「やる」、危険なら「やらない」だ。',boss:'talk',player:'attentive'},
  {speaker:'あなた',text:'今度こそ、守ります。たぶん。',boss:'smile',player:'confident'}
 ].map(line=>Object.freeze(line)));
+
+export const ROUND_SIZE=5;
+export const COMPLETION=Object.freeze({id:0,title:'本日の勤務、完了！',tag:'SHIFT COMPLETE',scene:'complete',color:'#83b69a',story:'5問のチェック、おつかれさまでした。\n次の勤務でも、会社の秘密を守ろう。'});

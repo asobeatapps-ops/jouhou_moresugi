@@ -1,12 +1,12 @@
-import {QUESTIONS,BY_ID,ROUTES,FIRST_CHAT,RETRY_CHAT} from './data.js?v=relaxed-2';
+import {QUESTIONS,BY_ID,ROUTES,FIRST_CHAT,RETRY_CHAT,ROUND_SIZE} from './data.js?v=five-chat-3';
 export const pointsFor=combo=>100*Math.min(5,Math.ceil(combo/5));
 export function normalEnding(danger,missed,safePress){
  if(danger===3)return 1;if(missed===3)return safePress?5:2;if(danger===2)return 3;return 4;
 }
 const shuffle=(list,rng)=>{const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 export class QuestionDeck{
- constructor(playNumber,rng=Math.random){this.rng=rng;this.route=ROUTES[(playNumber-1)%9];this.bags={};this.kinds=[];this.last=[];this.lastKind=null;this.streak=0}
- next(n){if(n===7||n===8&&this.route.length===2)return BY_ID[this.route[n-7]];
+ constructor(playNumber,rng=Math.random){this.rng=rng;this.route=ROUTES[(playNumber-1)%9];this.bags={};const majority=playNumber%2===0;this.kinds=(rng()<.5?[majority,majority,!majority,majority]:[majority,!majority,majority,majority]).reverse();this.last=[];this.lastKind=null;this.streak=0}
+ next(n){if(n===ROUND_SIZE)return BY_ID[this.route.at(-1)];if(n===ROUND_SIZE-1&&this.route.length===2)return BY_ID[this.route[0]];
   if(!this.kinds.length)this.kinds=shuffle([true,true,false,false],this.rng);
   if(this.streak>=2&&this.kinds.at(-1)===this.lastKind){const i=this.kinds.findIndex(x=>x!==this.lastKind);if(i>=0)[this.kinds[i],this.kinds[this.kinds.length-1]]=[this.kinds.at(-1),this.kinds[i]];else this.kinds.push(!this.lastKind)}
   const safe=this.kinds.pop();this.streak=safe===this.lastKind?this.streak+1:1;this.lastKind=safe;
@@ -23,7 +23,7 @@ export class GameEngine{
  }
  emitChat(){this.emit('chat',{line:this.introLines[this.introIndex],index:this.introIndex,total:this.introLines.length})}
  advanceIntro(now,index=this.introIndex,serial=this.serial){if(this.mode!=='intro'||this.paused||index!==this.introIndex||serial!==this.serial)return false;this.introIndex++;if(this.introIndex>=this.introLines.length)this.nextQuestion(now);else{this.phaseStarted=now;this.deadline=now+2000;this.emitChat()}return true}
- nextQuestion(now){this.token++;this.cancelInput();this.questionNo++;this.question=this.deck.next(this.questionNo);this.mode='question';this.phaseStarted=now;this.deadline=null;this.emit('question',{question:this.question,number:this.questionNo,token:this.token})}
+ nextQuestion(now){if(this.answered>=ROUND_SIZE){this.finish('complete',now);return}this.token++;this.cancelInput();this.questionNo++;this.question=this.deck.next(this.questionNo);this.mode='question';this.phaseStarted=now;this.deadline=null;this.emit('question',{question:this.question,number:this.questionNo,token:this.token})}
  tick(now){
   if(this.paused)return;
   if(this.mode==='intro'&&now>=this.deadline){this.advanceIntro(now);return}
@@ -57,11 +57,11 @@ export class GameEngine{
   if(q.id==='HS-03')this.flags.secretSkipped=!pressed;
   if(q.id==='HS-05')this.flags.destinationChecked=pressed;
   const special=q.id.startsWith('SP-')&&pressed?5+Number(q.id.slice(3)):null;
-  const id=this.trueEligible&&this.combo>=15?15:hidden??special??(this.mistakes>=3?normalEnding(this.danger,this.missed,this.safePress):null);
+  const id=this.trueEligible&&this.combo>=ROUND_SIZE?15:hidden??special??(this.mistakes>=3?normalEnding(this.danger,this.missed,this.safePress):null);
   if(id){this.finish(id,now);return true}
   this.emit('judgment',{correct,pressed,question:q,points:correct?pointsFor(this.combo):0});return true;
  }
- finish(id,now){if(this.endId)return;this.endId=id;this.endEvents++;this.mode='ending';this.phaseStarted=now;this.deadline=now+3000;this.token++;this.cancelInput();this.emit('ending',{id,score:this.score,maxCombo:this.maxCombo,answered:this.answered,mistakes:this.mistakes})}
+ finish(id,now){if(this.endId)return;this.endId=id;this.endEvents++;this.mode='ending';this.phaseStarted=now;this.deadline=now+3000;this.token++;this.cancelInput();this.emit('ending',{id,score:this.score,maxCombo:this.maxCombo,answered:this.answered,mistakes:this.mistakes,questionNo:this.questionNo})}
  pause(now){if(this.paused||!['intro','question','feedback','ending'].includes(this.mode))return;this.tick(now);this.paused=true;this.pauseAt=now;this.cancelInput();this.emit('pause')}
  resume(now){if(!this.paused)return;const delta=Math.max(0,now-this.pauseAt);this.phaseStarted+=delta;if(this.deadline!==null)this.deadline+=delta;this.paused=false;this.cancelInput();this.emit('resume')}
 }

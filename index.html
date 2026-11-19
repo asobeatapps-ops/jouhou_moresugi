@@ -9,8 +9,8 @@
 <meta property="og:description" content="安全ならやる。危険ならやらない。時間制限なし。全15END、あなたは会社を守れる？">
 <title>情報、漏れすぎ。｜ASOBEAT</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=relaxed-2">
-<script type="module" src="js/main.js?v=relaxed-2"></script>
+<link rel="stylesheet" href="css/style.css?v=five-chat-3">
+<script type="module" src="js/main.js?v=five-chat-3"></script>
 </head>
 <body>
 <div class="ambient-label" aria-hidden="true">ASOBEAT<br><span>SMALL GAMES.<br>BIG TROUBLE.</span></div>
@@ -19,14 +19,14 @@
  <section id="titleScreen" class="screen title-screen" aria-labelledby="gameTitle">
   <div class="title-copy"><p class="eyebrow"><i></i> 本日より、情報セキュリティ担当。</p><h1 id="gameTitle">情報、<br><span>漏れすぎ。</span><b aria-hidden="true">!</b></h1><p class="tagline">会社の命運、あなたの指に。</p></div>
   <div class="title-visual"><canvas id="titleCanvas" aria-label="明るいオフィスで働く上司と情報セキュリティ担当のイラスト"></canvas><span class="scene-stamp">CONFIDENTIAL?<small>たぶん、大丈夫。</small></span></div>
-  <div class="title-actions"><div class="rule-strip"><span><b>安全</b>なら「やる」</span><span class="rule-separator">/</span><span><b>危険</b>なら「やらない」</span></div><button id="startBtn" class="primary">出勤する <span>→</span></button><button id="collectionBtn" class="secondary">エンディング図鑑 <span id="titleCount">00 / 15</span></button><div class="title-meta"><span>時間制限なし・3ミスで終了</span><span>BEST <b id="titleBest">0</b></span></div><p class="title-foot">音が出ます。右上の ♪ で切り替えできます。</p></div>
+  <div class="title-actions"><div class="rule-strip"><span><b>安全</b>なら「やる」</span><span class="rule-separator">/</span><span><b>危険</b>なら「やらない」</span></div><button id="startBtn" class="primary">出勤する <span>→</span></button><button id="collectionBtn" class="secondary">エンディング図鑑 <span id="titleCount">00 / 15</span></button><div class="title-meta"><span>最大5問・3ミスで終了</span><span>BEST <b id="titleBest">0</b></span></div><p class="title-foot">音が出ます。右上の ♪ で切り替えできます。</p></div>
  </section>
  <section id="playScreen" class="screen play-screen" aria-label="ゲーム" hidden>
   <div class="hud"><div><span class="label">SCORE</span><strong id="score">00000</strong></div><div class="combo-hud"><span class="label">COMBO</span><strong id="combo">0</strong></div><div class="lives-hud"><span class="label">残りミス回数</span><span id="lives" aria-label="あと3回">● ● ●</span></div></div>
   <div id="office" class="office"><canvas id="playCanvas" aria-label="ミスの回数によって状態が変わるオフィス"></canvas><span id="officeStatus" class="office-status"><i></i> 社内異常なし</span><span id="chaosLabel" class="chaos-label" aria-hidden="true"></span><div id="vfx" aria-hidden="true"></div><p id="feedback" class="feedback" role="status" aria-live="polite"></p></div>
   <div class="task-panel"><div class="task-header"><span id="questionNumber">TASK 01</span><span id="remaining">時間制限なし</span></div><p class="task-caption">文章を読んで、じっくり選んでください。</p><article class="question-card"><h2 id="questionText">上司からの引き継ぎ中…</h2></article><div class="choice-buttons" role="group" aria-label="操作を選択"><button id="actionBtn" class="action-button" aria-describedby="questionText" disabled><span class="choice-title">やる</span><span id="actionLabel">EXECUTE ↗</span><i id="holdRing" aria-hidden="true"></i></button><button id="skipBtn" class="skip-button" aria-describedby="questionText" disabled><span class="choice-title">やらない</span><span>DO NOT EXECUTE</span></button></div><p id="instruction" class="instruction">安全なら「やる」、危険なら「やらない」。</p><span class="keyboard-note">PC：Tabで選択 / Space・Enterで決定</span></div>
   <button id="pauseBtn" class="pause-button" aria-label="一時停止">Ⅱ</button>
-  <button id="introPanel" class="intro-panel" hidden><span class="chat-label">社内チャット <b>部長</b></span><span id="chatText"></span><span class="chat-next">2秒で自動送り・タップで次へ →</span></button>
+  <section id="introPanel" class="intro-panel chat-panel" aria-label="部長とあなたの社内チャット" hidden><header class="chat-topbar"><span class="chat-avatar" aria-hidden="true">部</span><div><strong>部長とあなた</strong><small>社内チャット <i></i></small></div></header><div id="chatMessages" class="chat-messages" role="log" aria-live="polite" aria-relevant="additions"></div><button id="chatNextBtn" class="chat-next" type="button">2秒で自動送り・タップで次へ →</button></section>
   <div id="pausePanel" class="pause-panel" hidden><div><span class="eyebrow">TAKE A BREATH</span><h2>いったん、休憩。</h2><p>ひと呼吸おいて、ゆっくり再開できます。</p><button id="resumeBtn" class="primary">仕事に戻る →</button></div></div>
  </section>
  <section id="endScreen" class="screen end-screen" aria-labelledby="endTitle" hidden>

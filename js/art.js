@@ -62,7 +62,12 @@ export class Art{
  ending(end,t,reduced=false){if(!this.prepare())return;const c=this.c,p=reduced?1:Math.min(1,t/2.8),motion=reduced?0:t;const x=270,y=124;const col=end.color;
  c.fillStyle='#e5e9dc';c.fillRect(0,0,540,260);for(let i=0;i<18;i++){c.fillStyle='#9aaf9322';c.fillRect((i*83)%540,(i*47)%250,2,2)}
  c.save();c.globalAlpha=.11;office(c,0,0);c.restore();
- if(end.scene==='world'){globe(c,x,y,66);for(let i=0;i<9;i++){let a=i*.7+motion*.5;paper(c,x+Math.cos(a)*135*p,y+Math.sin(a)*88*p,a*.3,'#f8ead4',.65)}text(c,'PUBLIC',x,y+4,20,'#274c4a');}
+ if(end.scene==='complete'){
+  person(c,x-53,y+1,1.05,false,0,motion,'happy');person(c,x+66,y-7,1.05,true,0,motion,'smile');
+  ellipse(c,x,y-77,24,24,'#8abda3');text(c,'✓',x,y-69,28,'#fff9e5');
+  for(let i=0;i<18;i++){const xx=45+(i*61)%455,yy=22+((i*23+motion*22)%190);c.save();c.translate(xx,yy);c.rotate(i+motion*.5);rect(c,-3,-3,7,4,1,['#8abda3','#edb478','#d2b4ce'][i%3]);c.restore()}
+ }
+ else if(end.scene==='world'){globe(c,x,y,66);for(let i=0;i<9;i++){let a=i*.7+motion*.5;paper(c,x+Math.cos(a)*135*p,y+Math.sin(a)*88*p,a*.3,'#f8ead4',.65)}text(c,'PUBLIC',x,y+4,20,'#274c4a');}
  else if(end.scene==='sleep'){person(c,x,y-8,1.35,false,0,0);rect(c,x-70,y+91,140,9,3,'#bea383');for(let i=0;i<3;i++)text(c,'Z',x+45+i*20,y-35-i*22-Math.sin(motion+i)*4,14+i*4,'#9e8a62');}
  else if(end.scene==='send'){for(let i=0;i<12;i++){let f=((motion*.55+i*.083)%1);const px=60+f*420,py=40+((i*57)%160);poly(c,[[px-25,py-9],[px+20,py],[px-10,py+17],[px-8,py+2]],i%2?col:'#f7efd8',INK);line(c,[[px-45,py],[px-32,py]],'#a9bda2',2)}}
  else if(end.scene==='freeze'){monitor(c,x,y+5,1.9);for(let i=0;i<9;i++){const xx=80+(i*51)%400,yy=40+(i*37)%170;c.save();c.translate(xx,yy);c.rotate(i+motion*.05);for(let j=0;j<3;j++){c.rotate(Math.PI/3);line(c,[[-15,0],[15,0]],'#89a8c3',2)}c.restore()}text(c,'APPROVAL REQUIRED',x,234,11,'#637f9f')}
@@ -77,6 +82,6 @@ export class Art{
  else if(end.scene==='secret'){rect(c,x-74,y-25,70,21,5,'#cb9d66',INK);rect(c,x-78,y-10,156,85,6,'#dab17a',INK);for(let i=0;i<5;i++)paper(c,x+(i-2)*35*p,y-26-p*25+Math.sin(i+motion)*6,(i-2)*.15,'#fff1e3',1);text(c,'TOP SECRET',x,y+46,14,'#97614f');text(c,'♡',x-105,y-55,25,col);text(c,'♡',x+105,y-35,20,col)}
  else if(end.scene==='hole'){for(let i=8;i>0;i--){c.save();c.translate(x,y);c.rotate(motion*.25+i*.25);c.strokeStyle=i%2?col:'#77829d';c.lineWidth=4;c.beginPath();c.ellipse(0,0,18+i*12,10+i*6,0,.3,Math.PI*1.95);c.stroke();c.restore()}ellipse(c,x,y,33,23,'#273741');for(let i=0;i<6;i++){const f=((motion*.35+i*.16)%1),a=i+motion,r=150*(1-f);paper(c,x+Math.cos(a)*r,y+Math.sin(a)*r*.65,a,'#eee9db',Math.max(.1,1-f))}}
  else if(end.scene==='truth'){for(let i=0;i<30;i++)text(c,(i*117).toString(2).padStart(8,'0'),24+(i%10)*55,26+Math.floor(i/10)*100,8,'#77968966');c.save();c.globalAlpha=.5;ellipse(c,x,y,98,98,col);c.restore();person(c,x,y+6,1.25,false,0,0);for(let i=0;i<4;i++){const yy=46+i*46;line(c,[[x-80,yy],[x+80,yy]],'#f7f4e970',2)}rect(c,x-41,y+63,82,27,3,'#26484b');text(c,'YOU',x,y+82,18,'#f8efd4')}
- text(c,String(end.id).padStart(2,'0'),35,35,12,'#678578');c.restore();
+ text(c,end.id?String(end.id).padStart(2,'0'):'✓',35,35,12,'#678578');c.restore();
  }
 }
