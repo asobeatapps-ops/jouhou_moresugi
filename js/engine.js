@@ -1,24 +1,25 @@
-import {OBJECT_BY_ID,APP_ACTIONS,DROP_TARGETS} from './data.js?v=office-5';
+import {OBJECT_BY_ID,APP_ACTIONS,DROP_TARGETS,ENDING_COUNT} from './data.js?v=office-6';
+import {ButtonPhysics,crossesRect} from './button-physics.js?v=office-6';
 const APPS=new Set(APP_ACTIONS.map(a=>a.id));
 const HOLDS={send:1500,'app-lock':1200,'app-verify':1500,button:1000};
 export class OfficeEngine{
  constructor({onEvent=()=>{}}={}){this.onEvent=onEvent;this.mode='idle';this.token=0;this.serial=0;this.press=null;this.paused=false;this.endId=null}
  emit(type,data={}){this.onEvent({type,...data})}
  start({discovered=[]}={},now=0){
-  this.serial++;this.token++;this.mode='explore';this.paused=false;this.endId=null;this.press=null;this.panel=null;this.actions=0;this.bossTaps=0;this.sendTaps=0;this.lockTaps=0;this.lastSendTap=null;this.giant=false;this.buttonTaps=0;this.doorOpen=false;this.drawerOpen=false;this.portalOpen=false;this.folderOpen=false;this.verifying=false;
+  this.loose=null;this.looseWasPicked=false;this.lastLooseMove=null;this.throwVelocity=null;this.room={w:720,h:1100,button:{x:595,y:140,r:32},targets:{}};this.lastPhysics=now;this.serial++;this.token++;this.mode='explore';this.paused=false;this.endId=null;this.press=null;this.panel=null;this.actions=0;this.bossTaps=0;this.sendTaps=0;this.lockTaps=0;this.lastSendTap=null;this.giant=false;this.buttonTaps=0;this.doorOpen=false;this.drawerOpen=false;this.portalOpen=false;this.folderOpen=false;this.verifying=false;
   this.trueEligible=Array.from({length:14},(_,i)=>i+1).every(id=>discovered.includes(id));this.phaseStarted=now;this.deadline=null;this.flash=null;
-  this.emit('start');this.notice(this.trueEligible?'オフィスにいる「あなた」が、少し光っている。':'光る物をタップ。猫や資料は、つかんだまま運べます。');
+  this.emit('start');this.notice(this.trueEligible?'オフィスにいる「あなた」が、少し光っている。':'気になる物をタップ。猫や資料は、つかんだまま運べます。');
  }
- valid(id){return!!OBJECT_BY_ID[id]||(APPS.has(id)&&this.panel==='desktop')||(id==='send'&&this.panel==='mail')}
+ valid(id){return (id==='looseButton'?!!this.loose:!!OBJECT_BY_ID[id])||(APPS.has(id)&&this.panel==='desktop')||(id==='send'&&this.panel==='mail')}
  ready(token=this.token){return this.mode==='explore'&&!this.paused&&!this.endId&&token===this.token}
  notice(text,object=null){this.emit('notice',{text,object})}
  targetsFor(id){return DROP_TARGETS[id]||[]}
  beginPress(id,now,pointerId,token=this.token){
   if(!this.ready(token)||!this.valid(id)||this.press)return false;
-  this.press={id,at:now,pointerId,token,dragging:false};if(OBJECT_BY_ID[id]&&this.panel){this.panel=null;this.emit('panel')}this.emit('press',{id});return true;
+  if(id==='looseButton'){this.looseWasPicked=true;this.lastLooseMove=null;this.throwVelocity=null;this.loose.held=true;this.loose.vx=this.loose.vy=0}this.press={id,at:now,pointerId,token,dragging:false};if(OBJECT_BY_ID[id]&&this.panel){this.panel=null;this.emit('panel')}this.emit('press',{id});return true;
  }
- movePress(pointerId,token=this.token){if(!this.ready(token)||this.press?.pointerId!==pointerId||!OBJECT_BY_ID[this.press.id]?.draggable)return false;this.press.dragging=true;return true}
- cancelPress(){this.press=null}
+ movePress(pointerId,token=this.token){if(!this.ready(token)||this.press?.pointerId!==pointerId||!OBJECT_BY_ID[this.press.id]?.draggable)return false;this.press.dragging=true;if(this.press.id==='button'&&!this.giant){this.detach();this.press.id='looseButton'}return true}
+ cancelPress(){if(this.loose?.held){this.loose.release();this.loose.armed=false}this.press=null}
  release(now,pointerId,token=this.token){
   if(!this.ready(token)||this.press?.pointerId!==pointerId||this.press.token!==token)return false;this.tick(now);if(!this.ready(token)||!this.press)return false;
   const p=this.press;this.press=null;if(p.dragging)return false;return this.tap(p.id,now,token);
@@ -34,6 +35,7 @@ export class OfficeEngine{
   else if(id==='drawer'){this.panel=null;this.drawerOpen=!this.drawerOpen;this.notice(this.drawerOpen?'ここなら、ひみつの資料を安全にしまえそう。':'鍵の付いた引き出し。',id)}
   else if(id==='trash'){this.panel=null;this.notice('紙くずのゴミ箱。大切な物まで捨てないように。',id)}
   else if(id==='window'){this.panel=null;this.notice('外は広い世界。資料を近づけたら、風で飛んでいきそう。',id)}
+  else if(id==='looseButton'){this.loose.release(75,-90);this.notice('ころころ…。拾って、窓やゴミ箱へ投げられそう。',id)}
   else if(id==='button'){this.panel=null;if(this.giant){this.finish(9,now);return true}if(++this.buttonTaps>=2){this.reveal(now);return true}this.notice('ボタンが少しぐらつく。引っ張るか、長く押してみよう。',id)}
   else if(id==='self'){this.panel=null;if(this.trueEligible){this.finish(15,now);return true}this.notice('あなたの名札。ほかの14の結末を見つけたら、何かが変わるかも。',id)}
   else if(id==='app-mail'){this.panel='mail';this.emit('panel');this.notice('送信ボタンは、押し方で反応が変わりそう。','pc')}
@@ -51,6 +53,7 @@ export class OfficeEngine{
  drop(source,target,now,pointerId,token=this.token,delta={x:0,y:0}){
   if(!this.ready(token)||this.press?.pointerId!==pointerId||this.press.token!==token||this.press.id!==source||!this.press.dragging)return false;
   this.press=null;this.panel=null;this.lastSendTap=null;
+  if(source==='looseButton'){this.actions++;this.token++;const v=now-(this.lastLooseMove?.at??-Infinity)<120?this.throwVelocity:null;this.loose.release(v?.x||45,v?.y||0);this.loose.armed=this.looseWasPicked||Math.hypot(delta.x,delta.y)>80;this.throwVelocity=null;if(target==='window')this.finish(16,now);else if(target==='trash')this.finish(17,now);else{this.notice('ころころ…。床に落ちても、つかんで投げ直せます。','looseButton');this.emit('change')}return true}
   if(source==='button'){
    if(!this.giant&&Math.hypot(delta.x,delta.y)>=60){this.actions++;this.token++;this.reveal(now);return true}
    this.notice('壁のボタンを、もう少し大きく引っ張ってみよう。','button');this.emit('change');return false;
@@ -67,15 +70,24 @@ export class OfficeEngine{
   if(!this.endId)this.emit('change');return true;
  }
  reveal(now){this.giant=true;this.press=null;this.panel=null;this.flash={id:'button',at:now};this.notice('奥から、もっと大きなボタンが！触れたら何か起こりそう。','button');this.emit('change')}
+ setRoom(layout){
+  const q=720/layout.w,old=this.room;this.roomScale=q;this.room={w:720,h:layout.h*q,button:{x:(layout.boxes.button.x+layout.boxes.button.w/2)*q,y:(layout.boxes.button.y+layout.boxes.button.h/2)*q,r:Math.max(18,32*layout.k*q)},targets:{}};
+  for(const id of['window','trash']){const b=layout.boxes[id];this.room.targets[id]={x:b.x*q,y:b.y*q,w:b.w*q,h:(id==='trash'?b.h*.28:b.h)*q}}
+  if(this.loose){if(old&&old.h!==this.room.h&&!this.loose.held)this.loose.y*=this.room.h/old.h;this.loose.bounds(720,this.room.h)}
+ }
+ detach(){const b=this.room.button;this.loose=new ButtonPhysics(b.x,b.y,b.r);this.loose.bounds(720,this.room.h);this.giant=true;this.panel=null;this.notice('ぽこっ！外れたボタンは窓やゴミ箱へ。奥の大きなボタンも気になる。','looseButton');this.emit('change')}
+ moveLoose(point,now){if(!this.loose||this.press?.id!=='looseButton')return;const q=this.roomScale||1;const x=point.x*q,y=point.y*q,prev=this.lastLooseMove;this.throwVelocity=prev&&now>prev.at&&now-prev.at<120?{x:(x-prev.x)/(now-prev.at)*1000,y:(y-prev.y)/(now-prev.at)*1000}:{x:0,y:0};this.lastLooseMove={x,y,at:now};this.loose.hold(x,y)}
  tick(now){
-  if(this.paused)return;
+  const dt=(now-this.lastPhysics)/1000;this.lastPhysics=now;if(this.paused)return;
+  if(this.mode==='explore'&&this.loose){this.loose.step(dt);if(this.loose.armed&&!this.loose.held)for(const[id,rect]of Object.entries(this.room.targets)){if(this.loose.path.some(([a,b])=>crossesRect(a,b,rect))){this.finish(id==='window'?16:17,now);break}}}
+
   if(this.mode==='explore'&&this.press&&!this.press.dragging){const p=this.press,threshold=HOLDS[p.id];if(threshold&&now-p.at>=threshold){this.press=null;this.actions++;this.token++;if(p.id==='send')this.finish(1,now);else if(p.id==='app-lock')this.finish(10,now);else if(p.id==='app-verify')this.finish(11,now);else if(p.id==='button'){if(this.giant)this.finish(9,now);else this.reveal(now)}}}
   if(this.mode==='ending'&&now>=this.deadline){this.mode='result';this.emit('result',{id:this.endId})}
  }
  holdProgress(now){const p=this.press;return p&&!p.dragging&&HOLDS[p.id]?Math.max(0,Math.min(1,(now-p.at)/HOLDS[p.id])):0}
  holdScope(now){const p=this.holdProgress(now);return p<.25?'自分だけ':p<.5?'部署のみ':p<.8?'会社全体':'全世界'}
  closePanel(){if(this.mode!=='explore')return;this.press=null;this.panel=null;this.token++;this.emit('panel')}
- finish(id,now){if(this.endId||!Number.isInteger(id)||id<1||id>15)return;this.endId=id;this.mode='ending';this.press=null;this.panel=null;this.token++;this.phaseStarted=now;this.deadline=now+3000;this.emit('ending',{id,actions:this.actions,score:0,maxCombo:0})}
- pause(now){if(this.mode!=='explore'||this.paused)return;this.tick(now);if(this.mode!=='explore')return;this.paused=true;this.press=null;this.lastSendTap=null;this.emit('pause')}
+ finish(id,now){if(this.endId||!Number.isInteger(id)||id<1||id>ENDING_COUNT)return;this.endId=id;this.mode='ending';this.press=null;this.panel=null;this.token++;this.phaseStarted=now;this.deadline=now+3000;this.emit('ending',{id,actions:this.actions,score:0,maxCombo:0})}
+ pause(now){if(this.mode!=='explore'||this.paused)return;this.tick(now);if(this.mode!=='explore')return;this.paused=true;this.cancelPress();this.lastSendTap=null;this.emit('pause')}
  resume(){if(!this.paused||this.mode!=='explore')return;this.paused=false;this.press=null;this.lastSendTap=null;this.emit('resume')}
 }
