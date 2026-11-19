@@ -1,5 +1,5 @@
-import {OBJECT_BY_ID} from './data.js?v=office-6';
-import {hitObject,toWorld} from './office-layout.js?v=office-6';
+import {OBJECT_BY_ID} from './data.js?v=office-7';
+import {hitObject,toWorld} from './office-layout.js?v=office-7';
 export function bindOfficeInput({root,canvas,engine,getLayout,onPreview=()=>{},onSelect=()=>{},onHover=()=>{}}){
  let active=null,key=null,carry=null,lastPhysical=-Infinity;const off=[];
  const listen=(el,event,fn)=>{el.addEventListener(event,fn);off.push(()=>el.removeEventListener(event,fn))};
@@ -8,11 +8,11 @@ export function bindOfficeInput({root,canvas,engine,getLayout,onPreview=()=>{},o
  const point=e=>toWorld(getLayout(),canvas.getBoundingClientRect(),e.clientX,e.clientY);
  const center=id=>{const b=getLayout().boxes[id];return{x:b.x+b.w/2,y:b.y+b.h/2}};
  const preview=(source,delta,origin=null)=>{const p=origin||center(source),layout=getLayout(),v={x:p.x+delta.x,y:p.y+delta.y};if(source==='looseButton')engine.moveLoose(v,performance.now());onPreview({source,point:v,delta,over:hitObject(layout,v,source)})};
- function cancel(){const old=active;active=null;key=null;carry=null;engine.cancelPress();onPreview(null);for(const b of root.querySelectorAll('.pressing,.dragging'))b.classList.remove('pressing','dragging');if(old){try{old.button.releasePointerCapture(old.pointerId)}catch{}}}
+ function cancel(){const old=active;active=null;key=null;carry=null;engine.cancelPress();onPreview(null);for(const b of root.querySelectorAll('.pressing,.dragging'))b.classList.remove('pressing','dragging');if(old){try{root.releasePointerCapture(old.pointerId)}catch{}}}
  listen(root,'pointerdown',e=>{
   const b=control(e.target);if(!b||b.disabled||e.pointerType==='mouse'&&e.button!==0)return;e.preventDefault();lastPhysical=performance.now();if(active)return;if(carry)cancel();const id=idOf(b),token=engine.token;
   if(!engine.beginPress(id,performance.now(),e.pointerId,token))return;
-  active={id,token,pointerId:e.pointerId,button:b,start:point(e),client:{x:e.clientX,y:e.clientY},dragging:false,origin:OBJECT_BY_ID[id]?center(id):point(e)};b.classList.add('pressing');onSelect(id);try{b.setPointerCapture(e.pointerId)}catch{}
+  active={id,token,pointerId:e.pointerId,button:b,start:point(e),client:{x:e.clientX,y:e.clientY},dragging:false,origin:OBJECT_BY_ID[id]?center(id):point(e)};b.classList.add('pressing');onSelect(id);try{root.setPointerCapture(e.pointerId)}catch{}
  });
  listen(root,'pointermove',e=>{
   if(!active||active.pointerId!==e.pointerId){const b=control(e.target);onHover(b? idOf(b):null);return}
