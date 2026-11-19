@@ -8,7 +8,7 @@
     "test:browser": "node tests/browser.cjs",
     "test:audio-browser": "node tests/audio-browser.cjs",
     "test:keyboard": "node tests/keyboard.cjs",
-    "test:actions-browser": "node tests/actions-browser.cjs"
+    "test:touch-browser": "node tests/touch-browser.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"
