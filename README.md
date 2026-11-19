@@ -18,6 +18,22 @@
 
 5問を終えて3ミス未満なら「勤務完了」です。これは新しい図鑑ENDではなく、15種類の図鑑は維持します。真END15はEND01〜14を登録済みの状態で、新しい1プレイの5問すべてに正解すると成立します。5問目の隠し操作には400msの判定時間を残し、二度押しより先に勤務完了で閉じないようにしています。
 
+## カオスな寄り道とスワイプ
+
+1プレイの2問目だけに、任意の追加アクションが現れます。通常の「やる／やらない」も選べます。出勤回数に応じて次の7種類を巡回します。
+
+1. 上司に丸投げ → 上司が全社員へ転送
+2. ボタンを引っこ抜く → 奥から巨大なボタン
+3. あやしいメールをゴミ箱へ → 指・マウスでメールを右へ動かす。ゴミ箱ボタンでも同じ操作が可能
+4. 猫に入力させる → 猫だけが入れるパスワード
+5. 見なかったことにする → 資料が追いかけてくる
+6. パソコンを冷蔵庫へ → オフィスが凍る
+7. 紙に全部書き写す → 書類の山に埋まる
+
+6種類のカオス行動は寄り道です。現在の1問を消化し、得点・ミスは増やさず、コンボを0にして1600msの演出後に次へ進みます。メール処分は通常の正解と同じ得点・コンボで1回だけ判定し、800msの演出後に進みます。どちらも6問目や新しい図鑑ENDを追加しません。通常の2択だけで従来の全15ENDへ到達できます。メール処分を含む5問正解でも真ENDに到達できます。
+
+スワイプの失敗・指を離す場所の間違いでは回答しません。画面回転・一時停止・タブ移動でドラッグを解除します。スマホのタッチとPCのマウス、キーボード、支援技術のクリックに対応し、ドラッグが難しい場合はゴミ箱をタップできます。ゲーム内の演出のみで、実際のメールやファイルは扱いません。
+
 ## ローカル起動
 
 ```sh
@@ -34,6 +50,7 @@ http://localhost:8020/ を開きます。ES Modulesを利用するため、`file
 - `js/engine.js`：出題・進行・得点・操作競合・END優先順位
 - `js/main.js`：DOM、入力、画面遷移、フォーカス管理・時間停止
 - `js/art.js`：Canvasによるオフィス、人物、15種類のENDアニメーション
+- `js/extra-input.js`：追加ボタン・ゴミ箱スワイプ・キャンセルと古い入力の排除
 - `js/audio.js`：オリジナル生成BGM／SE、音声解除・停止
 - `js/storage.js`：ブラウザ保存と失敗時のメモリ継続
 - `assets/favicon.svg`：自作アイコン
@@ -68,7 +85,7 @@ Firebase、外部API、解析、オンラインランキングは利用しませ
 npm test
 ```
 
-Node.js標準テストランナーのみを利用します。ブラウザ検証には開発依存のPlaywright 1.62.1を使用します。別ターミナルで上記HTTPサーバーを起動してから、`npm install`、`npx playwright install chromium webkit` を実行し、`npm run test:browser` / `npm run test:audio-browser` / `npm run test:keyboard` で再現できます。`/usr/bin/chromium` が存在する場合はそれを利用し、それ以外はPlaywrightの管理するChromiumを利用します。別の実行パスは `CHROMIUM_PATH`、サーバーURLは `GAME_TEST_URL`、出力先は `GAME_TEST_OUTPUT` で指定できます。PlaywrightのWebKitはSafari相当のエンジン検証であり、実機Safariそのものの検証ではありません。詳細はQA_REPORTを参照してください。実機での操作や音声の確認は自動ブラウザ検証とは区別しています。
+Node.js標準テストランナーのみを利用します。ブラウザ検証には開発依存のPlaywright 1.62.1を使用します。別ターミナルで上記HTTPサーバーを起動してから、`npm install`、`npx playwright install chromium webkit` を実行し、`npm run test:browser` / `npm run test:audio-browser` / `npm run test:keyboard` / `npm run test:actions-browser` で再現できます。`/usr/bin/chromium` が存在する場合はそれを利用し、それ以外はPlaywrightの管理するChromiumを利用します。別の実行パスは `CHROMIUM_PATH`、サーバーURLは `GAME_TEST_URL`、出力先は `GAME_TEST_OUTPUT` で指定できます。PlaywrightのWebKitはSafari相当のエンジン検証であり、実機Safariそのものの検証ではありません。詳細はQA_REPORTを参照してください。実機での操作や音声の確認は自動ブラウザ検証とは区別しています。
 
 ## GitHub Pages
 
