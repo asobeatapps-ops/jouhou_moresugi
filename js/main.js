@@ -1,23 +1,25 @@
-import {GameEngine} from './engine.js?v=five-chat-3';
-import {ENDS,COMPLETION,ROUND_SIZE} from './data.js?v=five-chat-3';
-import {SaveStore} from './storage.js?v=five-chat-3';
-import {Art} from './art.js?v=five-chat-3';
-import {Sound} from './audio.js?v=five-chat-3';
+import {GameEngine} from './engine.js?v=chaos-4';
+import {ENDS,COMPLETION,ROUND_SIZE} from './data.js?v=chaos-4';
+import {SaveStore} from './storage.js?v=chaos-4';
+import {Art} from './art.js?v=chaos-4';
+import {Sound} from './audio.js?v=chaos-4';
+import {bindExtraActions} from './extra-input.js?v=chaos-4';
 const $=id=>document.getElementById(id),number=n=>String(n).padStart(2,'0');
 let browserStorage;try{browserStorage=window.localStorage}catch{browserStorage={getItem(){throw Error('Storage unavailable')},setItem(){throw Error('Storage unavailable')}}}
 const save=new SaveStore(browserStorage),sound=new Sound(save.data.sound),art={title:new Art($('titleCanvas')),play:new Art($('playCanvas')),end:new Art($('endCanvas'))};
-const reduced=matchMedia('(prefers-reduced-motion: reduce)');let screen='title',backTo='title',fresh=false,reaction=null,chatInput=null,renderTime=0,lastPointer=-Infinity;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');let screen='title',backTo='title',fresh=false,reaction=null,chatInput=null,extraInput=null,renderTime=0,lastPointer=-Infinity;
 const pointers=new Map(),skipPointers=new Map();let keyboardToken=null,skipKeyboardToken=null;const screenIds={title:'titleScreen',play:'playScreen',end:'endScreen',collection:'collectionScreen'};
 const engine=new GameEngine({onEvent:handleEvent});
+extraInput=bindExtraActions({engine,extraBtn:$('extraBtn'),mailCard:$('mailCard'),trashTarget:$('trashTarget')});
 function show(name){screen=name;for(const[key,id]of Object.entries(screenIds))$(id).hidden=key!==name;cancelInput();$('app').dataset.screen=name;window.scrollTo({top:0,behavior:'instant'});const focus={title:'startBtn',end:'endTitle',collection:'collectionTitle'}[name];if(focus){$(focus).tabIndex=focus==='startBtn'?0:-1;$(focus).focus({preventScroll:true})}}
 function notice(){$('saveNotice').hidden=!save.failed}
 function updateTitle(){$('titleBest').textContent=save.data.best.toLocaleString();$('titleCount').textContent=`${number(save.data.discovered.length)} / 15`;notice()}
 function updateSound(){$('soundBtn').textContent=save.data.sound?'♪ ON':'♪ OFF';$('soundBtn').setAttribute('aria-pressed',String(save.data.sound));$('soundBtn').setAttribute('aria-label',save.data.sound?'音声をオフにする':'音声をオンにする')}
-function cancelInput(){chatInput=null;skipKeyboardToken=null;for(const id of skipPointers.keys()){try{$('skipBtn').releasePointerCapture(id)}catch{}}skipPointers.clear();for(const id of pointers.keys()){try{$('actionBtn').releasePointerCapture(id)}catch{}}pointers.clear();keyboardToken=null;engine.cancelInput();$('actionBtn').classList.remove('pressing');$('holdRing').style.transform='scaleX(0)'}
+function cancelInput(){extraInput?.cancel();chatInput=null;skipKeyboardToken=null;for(const id of skipPointers.keys()){try{$('skipBtn').releasePointerCapture(id)}catch{}}skipPointers.clear();for(const id of pointers.keys()){try{$('actionBtn').releasePointerCapture(id)}catch{}}pointers.clear();keyboardToken=null;engine.cancelInput();$('actionBtn').classList.remove('pressing');$('holdRing').style.transform='scaleX(0)'}
 function hud(){$('score').textContent=String(engine.score).padStart(5,'0');$('combo').textContent=engine.combo;const left=3-engine.mistakes;$('lives').textContent=Array.from({length:3},(_,i)=>i<left?'●':'○').join(' ');$('lives').setAttribute('aria-label',`あと${left}回`);$('officeStatus').innerHTML=`<i></i>${['社内異常なし','社員がざわついています','システムに異常発生'][Math.min(2,engine.mistakes)]}`;$('chaosLabel').textContent=['','CAUTION','SYSTEM ERROR'][Math.min(2,engine.mistakes)];sound.level=engine.mistakes}
 function particles(correct){$('vfx').replaceChildren();if(reduced.matches||!correct)return;for(let i=0;i<12;i++){const p=document.createElement('i');p.className='particle';p.style.setProperty('--dx',`${Math.cos(i*.9)*(45+i*7)}px`);p.style.setProperty('--dy',`${Math.sin(i*.9)*45-30}px`);p.style.background=i%2?'#f0ab69':'#297f6b';$('vfx').append(p)}}
 function handleEvent(e){
- if(e.type==='intro'){$('playScreen').classList.add('intro-active');$('chatMessages').replaceChildren();$('introPanel').hidden=false;$('actionBtn').disabled=true;$('skipBtn').disabled=true;$('questionText').textContent='上司からの引き継ぎ中…';$('actionLabel').innerHTML='INCOMING MESSAGE <b>…</b>';$('questionNumber').textContent='ONBOARDING';$('remaining').textContent='引き継ぎ中';$('feedback').textContent='';$('vfx').replaceChildren();$('pausePanel').hidden=true;reaction=null;hud();sound.start();$('chatNextBtn').focus({preventScroll:true})}
+ if(e.type==='intro'){$('extraAction').hidden=true;$('playScreen').classList.remove('has-extra','action-active');$('playScreen').classList.add('intro-active');$('chatMessages').replaceChildren();$('introPanel').hidden=false;$('actionBtn').disabled=true;$('skipBtn').disabled=true;$('questionText').textContent='上司からの引き継ぎ中…';$('actionLabel').innerHTML='INCOMING MESSAGE <b>…</b>';$('questionNumber').textContent='ONBOARDING';$('remaining').textContent='引き継ぎ中';$('feedback').textContent='';$('vfx').replaceChildren();$('pausePanel').hidden=true;reaction=null;hud();sound.start();$('chatNextBtn').focus({preventScroll:true})}
  if(e.type==='chat'){
   const log=$('chatMessages'),stick=log.scrollTop+log.clientHeight>=log.scrollHeight-24,mine=e.line.speaker==='あなた';
   const row=document.createElement('div');row.className='chat-message'+(mine?' chat-mine':' chat-boss');
@@ -30,13 +32,29 @@ function handleEvent(e){
   log.append(row);if(stick)log.scrollTop=log.scrollHeight;
   $('chatNextBtn').textContent=`${e.index+1} / ${e.total} · 2秒で自動送り・タップで次へ →`;sound.effect('chat');
  }
- if(e.type==='question'){$('playScreen').classList.remove('intro-active');pointers.clear();keyboardToken=null;$('introPanel').hidden=true;$('actionBtn').disabled=false;$('skipBtn').disabled=false;$('actionBtn').classList.remove('pressing');$('holdRing').style.transform='scaleX(0)';$('actionBtn').dataset.questionId=e.question.id;$('questionText').textContent=e.question.text;$('questionNumber').textContent=`第${e.number}問 / 全${ROUND_SIZE}問`;$('remaining').textContent='時間制限なし';$('actionLabel').textContent='EXECUTE ↗';$('feedback').textContent='';$('vfx').replaceChildren();$('office').classList.remove('hit');$('instruction').textContent='安全なら「やる」、危険なら「やらない」。';$('actionBtn').focus({preventScroll:true})}
+ if(e.type==='question'){extraInput.cancel();showExtra(e.question.extra);$('playScreen').classList.remove('intro-active');pointers.clear();keyboardToken=null;$('introPanel').hidden=true;$('actionBtn').disabled=false;$('skipBtn').disabled=false;$('actionBtn').classList.remove('pressing');$('holdRing').style.transform='scaleX(0)';$('actionBtn').dataset.questionId=e.question.id;$('questionText').textContent=e.question.text;$('questionNumber').textContent=`第${e.number}問 / 全${ROUND_SIZE}問`;$('remaining').textContent='時間制限なし';$('actionLabel').textContent='EXECUTE ↗';$('feedback').textContent='';$('vfx').replaceChildren();$('office').classList.remove('hit');$('instruction').textContent='安全なら「やる」、危険なら「やらない」。';$('actionBtn').focus({preventScroll:true})}
  if(e.type==='press')sound.effect('press');
- if(e.type==='judgment'){reaction={correct:e.correct,until:performance.now()+1200};hud();$('skipBtn').disabled=true;$('actionBtn').disabled=e.question.id!=='HS-02';$('actionBtn').classList.remove('pressing');$('feedback').className='feedback'+(e.correct?'':' wrong');$('feedback').replaceChildren(document.createTextNode(e.correct?'判断、正解。':'あっ、漏れた。'));const sub=document.createElement('small');sub.textContent=e.correct?`+${e.points}  /  ${engine.combo} COMBO`:(e.pressed?'危険な操作を実行しました':'安全な操作を見送りました');$('feedback').append(sub);$('actionLabel').textContent=e.correct?'CORRECT ✓':'INCIDENT !';sound.effect(e.correct?'correct':'wrong');if(!e.correct){sound.effect('leak');$('office').classList.add('hit')}particles(e.correct)}
+ if(e.type==='judgment'){extraInput.cancel();$('extraBtn').disabled=true;$('trashTarget').disabled=true;reaction={correct:e.correct,until:performance.now()+1200};hud();$('skipBtn').disabled=true;$('actionBtn').disabled=e.question.id!=='HS-02';$('actionBtn').classList.remove('pressing');$('feedback').className='feedback'+(e.correct?'':' wrong');$('feedback').replaceChildren(document.createTextNode(e.correct?'判断、正解。':'あっ、漏れた。'));const sub=document.createElement('small');sub.textContent=e.correct?`+${e.points}  /  ${engine.combo} COMBO`:(e.pressed?'危険な操作を実行しました':'安全な操作を見送りました');$('feedback').append(sub);$('actionLabel').textContent=e.correct?'CORRECT ✓':'INCIDENT !';sound.effect(e.correct?'correct':'wrong');if(!e.correct){sound.effect('leak');$('office').classList.add('hit')}particles(e.correct)}
+ if(e.type==='action'){
+  $('playScreen').classList.add('action-active');cancelInput();hud();$('actionBtn').disabled=true;$('skipBtn').disabled=true;$('extraBtn').disabled=true;$('trashTarget').disabled=true;
+  $('extraBtn').hidden=true;$('skillPanel').hidden=true;$('extraNote').hidden=true;$('extraStatus').hidden=false;
+  $('extraStatus').replaceChildren();const title=document.createElement('strong'),result=document.createElement('span');title.textContent=e.action.title;result.textContent=e.action.result;$('extraStatus').append(title,result);
+  $('feedback').textContent='';$('vfx').replaceChildren();$('actionLabel').textContent=e.action.kind==='skill'?'安全に処分 ✓':'寄り道中…';if(e.action.kind!=='skill')sound.effect('chaos');
+ }
  if(e.type==='ending'){cancelInput();sound.stop();sound.effect(e.id==='complete'?'correct':[8,9,12].includes(e.id)?'blast':'end');fresh=save.result(e);if(fresh)sound.effect('found');const end=e.id==='complete'?COMPLETION:ENDS[e.id-1];$('endNumber').textContent=e.id==='complete'?'5 QUESTIONS / COMPLETE':`ENDING ${number(e.id)} / 15`;$('endTitle').textContent=end.title;$('endTag').textContent=end.tag;$('endStory').textContent=e.id==='complete'&&e.mistakes===0?'全5問を正しく判断できました。\n会社の秘密は、今日も無事です。':end.story;$('newEnd').hidden=!fresh;$('finalScore').textContent=e.score.toLocaleString();$('bestScore').textContent=save.data.best.toLocaleString();$('finalCombo').textContent=e.maxCombo;$('collectionProgress').textContent=`発見した結末 ${save.data.discovered.length} / 15  ·  収集率 ${Math.floor(save.data.discovered.length/15*100)}%`;$('resultActions').hidden=true;$('endAnimating').hidden=false;$('introPanel').hidden=true;$('pausePanel').hidden=true;show('end');notice()}
  if(e.type==='result'){$('resultActions').hidden=false;$('endAnimating').hidden=true;notice()}
  if(e.type==='pause'){if(reaction)reaction.left=Math.max(0,reaction.until-performance.now());cancelInput();sound.suspend();$('pausePanel').hidden=false}
  if(e.type==='resume'){if(reaction)reaction.until=performance.now()+(reaction.left||0);$('pausePanel').hidden=true;sound.start(engine.mistakes)}
+}
+function showExtra(action){
+ $('playScreen').classList.remove('action-active');
+ $('extraAction').hidden=!action;$('playScreen').classList.toggle('has-extra',!!action);$('extraStatus').hidden=true;
+ $('extraNote').hidden=false;$('extraBtn').hidden=!action||action.kind==='skill';$('skillPanel').hidden=!action||action.kind!=='skill';
+ $('extraBtn').disabled=false;$('trashTarget').disabled=false;
+ if(!action)return;
+ $('extraBtn').textContent=action.label;$('extraAction').dataset.action=action.id;
+ $('extraNote').textContent=action.kind==='skill'?'メールを右のゴミ箱へ。ゴミ箱のタップでもOK':'得点・ミスは増えません。コンボは途切れます。';
+ $('extraAction').querySelector('.extra-tag').textContent=action.kind==='skill'?'メールをスワイプして片づけよう':'今回だけのカオスな選択肢';
 }
 function start(){sound.unlock();show('play');const playNumber=save.start();engine.start({playNumber,discovered:[...save.data.discovered]},performance.now());notice()}
 function openCollection(from){backTo=from;sound.stop();renderCollection();show('collection')}
@@ -64,8 +82,10 @@ function frame(now){if(!document.hidden){if(screen==='play'||screen==='end')engi
  if(screen==='play'){
   let emotions={player:engine.mistakes>=2?'panic':engine.mistakes?'worried':'attentive',boss:engine.mistakes>=2?'shocked':engine.mistakes?'worried':'smile'};
   if(engine.mode==='intro'){const line=engine.introLines[engine.introIndex];emotions={player:line.player,boss:line.boss}}
+  else if(engine.mode==='action'&&engine.activeAction)emotions={player:engine.activeAction.player,boss:engine.activeAction.boss};
   else if(reaction&&frozen<reaction.until)emotions=reaction.correct?{player:'happy',boss:'confident'}:{player:'shocked',boss:engine.mistakes>=2?'panic':'worried'};
-  art.play.office(t,engine.mistakes,emotions);
+  const action=engine.mode==='action'?engine.activeAction:null,progress=action?Math.max(0,Math.min(1,(frozen-engine.phaseStarted)/action.duration)):0;
+  art.play.office(t,engine.mistakes,emotions,action,reduced.matches?1:progress);
   if(engine.mode==='question'){const hold=engine.hold&&engine.question.id==='HS-01'?Math.min(1,(frozen-engine.hold.at)/1500):0;$('holdRing').style.transform=`scaleX(${hold})`}
  }if(screen==='end')art.end.ending(engine.endId==='complete'?COMPLETION:ENDS[engine.endId-1],(now-engine.phaseStarted)/1000,reduced.matches);
  }}requestAnimationFrame(frame)}

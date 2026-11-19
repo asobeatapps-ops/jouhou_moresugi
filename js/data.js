@@ -245,3 +245,14 @@ export const RETRY_CHAT = Object.freeze([
 
 export const ROUND_SIZE=5;
 export const COMPLETION=Object.freeze({id:0,title:'本日の勤務、完了！',tag:'SHIFT COMPLETE',scene:'complete',color:'#83b69a',story:'5問のチェック、おつかれさまでした。\n次の勤務でも、会社の秘密を守ろう。'});
+
+// One optional action on the second question; the existing END route stays at 4/5.
+export const EXTRA_ACTIONS=Object.freeze([
+ {id:'delegate',kind:'chaos',label:'上司に丸投げする',title:'まさかの全員転送。',result:'上司「あとは全社員に聞いてみよう！」',safeId:'S-04',dangerId:'D-14',boss:'panic',player:'shocked',duration:1600},
+ {id:'pull',kind:'chaos',label:'ボタンを引っこ抜く',title:'奥から、もっと大きいボタン。',result:'抜いたボタンは、ほんの一部だった。',safeId:'S-01',dangerId:'D-11',boss:'shocked',player:'shocked',duration:1600},
+ {id:'discard',kind:'skill',label:'メールをゴミ箱へ',title:'あやしいメール、処分完了！',result:'開かずにゴミ箱へ。安全に片づけました。',safeId:'S-04',dangerId:'D-03',safeText:'知らない相手から届いたメールを、開かずにゴミ箱へ入れる',boss:'confident',player:'happy',duration:800},
+ {id:'cat',kind:'chaos',label:'猫に入力させる',title:'パスワードは、にゃー。',result:'猫しかログインできなくなりました。',safeId:'S-13',dangerId:'D-02',boss:'surprised',player:'surprised',duration:1600},
+ {id:'secret',kind:'chaos',label:'見なかったことにする',title:'資料のほうが追いかけてきた。',result:'見ないふりでは、逃げきれません。',safeId:'S-15',dangerId:'D-06',boss:'worried',player:'shocked',duration:1600},
+ {id:'fridge',kind:'chaos',label:'パソコンを冷蔵庫に入れる',title:'冷やしたのは、会社の空気。',result:'情報は冷やせない。オフィスだけが凍りました。',safeId:'S-02',dangerId:'D-10',boss:'shocked',player:'worried',duration:1600},
+ {id:'paper',kind:'chaos',label:'紙に全部書き写す',title:'紙、増えすぎ。',result:'書き写した資料で、オフィスが埋まりました。',safeId:'S-07',dangerId:'D-08',boss:'worried',player:'surprised',duration:1600}
+].map(action=>Object.freeze(action)));
