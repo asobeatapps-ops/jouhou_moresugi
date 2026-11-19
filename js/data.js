@@ -211,18 +211,34 @@ export const ROUTES = Object.freeze([
 ]);
 export const ENDS = Object.freeze([
  {id:1,title:'全世界に公開しました',tag:'PUBLIC DOMAIN',icon:'◎',color:'#ed695b',scene:'world',hint:'危険なボタンを3回押してしまうと…',story:'公開範囲：全世界。\n会社の秘密が、みんなの常識になりました。'},
- {id:2,title:'仕事してませんでした',tag:'NOT RESPONDING',icon:'☕',color:'#d3aa6d',scene:'sleep',hint:'安全なボタンさえ一度も押さずに、3回見送る。',story:'流出ゼロ。進捗もゼロ。\nあなたの勤務時間だけが静かに過ぎました。'},
- {id:3,title:'送信ボタン依存症',tag:'SEND. SEND. SEND.',icon:'➤',color:'#f18a6d',scene:'send',hint:'危険な押下を2回、安全な見送りを1回。',story:'その指は、もう止まらない。\n送信ボタンに、休暇をください。'},
- {id:4,title:'慎重すぎて業務停止',tag:'ACCESS PENDING',icon:'▣',color:'#7d9ec6',scene:'freeze',hint:'危険な押下を1回、安全な見送りを2回。',story:'確認のための確認を確認中。\n業務は、再開の許可待ちになりました。'},
- {id:5,title:'安全第一、仕事は後回し',tag:'SAFETY FIRST. FOREVER.',icon:'△',color:'#c7b763',scene:'shield',hint:'安全なボタンを押せる。でも3回、安全を見送る。',story:'安全な判断はできる。\n仕事を進める気があるかは、別の話。'},
+ {id:2,title:'仕事してませんでした',tag:'NOT RESPONDING',icon:'☕',color:'#d3aa6d',scene:'sleep',hint:'安全な操作に3回「やらない」を選ぶ。「やる」の成功は0回。',story:'流出ゼロ。進捗もゼロ。\nあなたの勤務時間だけが静かに過ぎました。'},
+ {id:3,title:'送信ボタン依存症',tag:'SEND. SEND. SEND.',icon:'➤',color:'#f18a6d',scene:'send',hint:'危険な操作に「やる」を2回、安全な操作に「やらない」を1回。',story:'その指は、もう止まらない。\n送信ボタンに、休暇をください。'},
+ {id:4,title:'慎重すぎて業務停止',tag:'ACCESS PENDING',icon:'▣',color:'#7d9ec6',scene:'freeze',hint:'危険な操作に「やる」を1回、安全な操作に「やらない」を2回。',story:'確認のための確認を確認中。\n業務は、再開の許可待ちになりました。'},
+ {id:5,title:'安全第一、仕事は後回し',tag:'SAFETY FIRST. FOREVER.',icon:'△',color:'#c7b763',scene:'shield',hint:'安全な操作で「やる」に成功し、安全な操作に3回「やらない」を選ぶ。',story:'安全な判断はできる。\n仕事を進める気があるかは、別の話。'},
  {id:6,title:'AIが社長になりました',tag:'CEO.exe INSTALLED',icon:'AI',color:'#8e98e5',scene:'ai',hint:'7問目の特別な依頼で、AIにすべてを任せてみる。',story:'新社長の挨拶は0.002秒。\n最初の議題は「人類の稼働率」でした。'},
  {id:7,title:'猫が最高情報責任者',tag:'CHIEF NYAN OFFICER',icon:'猫',color:'#ecc286',scene:'cat',hint:'特別な依頼で、猫を最高管理者にする。',story:'最高機密は、段ボールの中。\n新CIOはキーボードの上でお昼寝中です。'},
  {id:8,title:'会社、消滅。',tag:'404 COMPANY NOT FOUND',icon:'404',color:'#de7d85',scene:'vanish',hint:'復元不能な削除ボタン。押した後は戻れない。',story:'社員も、資料も、社名も。\n残ったのは、あなたのクリック履歴だけ。'},
  {id:9,title:'地球ごと初期化',tag:'FACTORY RESET: EARTH',icon:'↻',color:'#80c5b5',scene:'earth',hint:'特別な依頼で、地球規模の初期化を実行する。',story:'「再起動してください」\nその案内は、青い惑星にも届きました。'},
  {id:10,title:'セキュリティ強すぎ問題',tag:'EVERYONE DENIED',icon:'▤',color:'#92b8b9',scene:'lock',hint:'社員のアクセス権を、永久にゼロへ。',story:'不正アクセスは完全に消えた。\n正規アクセスも、完全に消えた。'},
- {id:11,title:'永遠に確認中',tag:'VERIFYING… FOREVER',icon:'∞',color:'#c3a5df',scene:'loop',hint:'「セキュリティ確認結果を記録する」を1.5秒長押し。',story:'確認が終わったことの確認が終わらない。\n進捗：99.999999％。'},
- {id:12,title:'誤爆の神',tag:'DOUBLE TROUBLE',icon:'!!',color:'#f0a252',scene:'blast',hint:'緊急通報ボタンを0.24秒以内に2回タップ。',story:'通報先にも、通報先の通報先にも届いた。\nその二度押しは、伝説になりました。'},
- {id:13,title:'社長の秘密が…',tag:'TOP SECRET / OPEN',icon:'?',color:'#e098bc',scene:'secret',hint:'社長のフォルダは開かず、次の「公開」は押す。',story:'中身を見ないまま、全員に共有。\n社長のポエムが、トレンド入りしました。'},
- {id:14,title:'情報、ブラックホールへ',tag:'DESTINATION: UNKNOWN',icon:'●',color:'#a5a3df',scene:'hole',hint:'外部転送先の検証を押し、次の不明な宛先へ送る。',story:'転送完了。受信者なし。\n情報は、光も戻らない場所へ吸い込まれました。'},
+ {id:11,title:'永遠に確認中',tag:'VERIFYING… FOREVER',icon:'∞',color:'#c3a5df',scene:'loop',hint:'「セキュリティ確認結果を記録する」で「やる」を1.5秒長押し。',story:'確認が終わったことの確認が終わらない。\n進捗：99.999999％。'},
+ {id:12,title:'誤爆の神',tag:'DOUBLE TROUBLE',icon:'!!',color:'#f0a252',scene:'blast',hint:'緊急通報の問題で「やる」を0.24秒以内に2回タップ。',story:'通報先にも、通報先の通報先にも届いた。\nその二度押しは、伝説になりました。'},
+ {id:13,title:'社長の秘密が…',tag:'TOP SECRET / OPEN',icon:'?',color:'#e098bc',scene:'secret',hint:'社長のフォルダは「やらない」、次の「公開」は「やる」。',story:'中身を見ないまま、全員に共有。\n社長のポエムが、トレンド入りしました。'},
+ {id:14,title:'情報、ブラックホールへ',tag:'DESTINATION: UNKNOWN',icon:'●',color:'#a5a3df',scene:'hole',hint:'外部転送先の検証で「やる」、次の不明な宛先でも「やる」。',story:'転送完了。受信者なし。\n情報は、光も戻らない場所へ吸い込まれました。'},
  {id:15,title:'あなたが情報でした',tag:'YOU ARE THE DATA',icon:'◇',color:'#e8dba1',scene:'truth',hint:'END01〜14を発見した後、新しい勤務で15問連続正解。',story:'守っていたのは、会社のデータではなかった。\nこのゲームに記録されていたのは、あなたでした。'}
 ].map(e=>Object.freeze(e)));
+
+// Each chat message stays for two seconds; a tap advances one message.
+export const FIRST_CHAT = Object.freeze([
+ {speaker:'部長',text:'おはよう。今日から君が情報セキュリティ担当だ。',boss:'confident',player:'attentive'},
+ {speaker:'部長',text:'安全なら「やる」。危険なら「やらない」を選んでくれ。',boss:'talk',player:'attentive'},
+ {speaker:'あなた',text:'了解しました！じっくり考えて選びます。',boss:'smile',player:'confident'},
+ {speaker:'部長',text:'ちなみに前任者は、全社員の給料を世界中に公開した。',boss:'worried',player:'surprised'},
+ {speaker:'あなた',text:'えっ',boss:'worried',player:'shocked'},
+ {speaker:'部長',text:'3回間違えなければ大丈夫だ。たぶん。',boss:'talk',player:'worried'},
+ {speaker:'部長',text:'時間制限はない。会社の命運は任せた。',boss:'confident',player:'surprised'},
+ {speaker:'あなた',text:'ちょっと待って！？',boss:'smile',player:'shocked'}
+].map(line=>Object.freeze(line)));
+export const RETRY_CHAT = Object.freeze([
+ {speaker:'部長',text:'安全なら「やる」。危険なら「やらない」。焦らなくていい。',boss:'talk',player:'attentive'},
+ {speaker:'あなた',text:'今度こそ、守ります。たぶん。',boss:'smile',player:'confident'}
+].map(line=>Object.freeze(line)));

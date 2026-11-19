@@ -1,5 +1,4 @@
-import {QUESTIONS,BY_ID,ROUTES} from './data.js';
-export const durationFor=n=>Math.max(1200,3000-75*(n-1));
+import {QUESTIONS,BY_ID,ROUTES,FIRST_CHAT,RETRY_CHAT} from './data.js?v=relaxed-2';
 export const pointsFor=combo=>100*Math.min(5,Math.ceil(combo/5));
 export function normalEnding(danger,missed,safePress){
  if(danger===3)return 1;if(missed===3)return safePress?5:2;if(danger===2)return 3;return 4;
@@ -20,16 +19,15 @@ export class GameEngine{
  emit(type,data={}){this.onEvent({type,...data})}
  start({playNumber=1,discovered=[]}={},now=0){
   this.serial++;this.token++;this.score=0;this.combo=0;this.maxCombo=0;this.mistakes=0;this.danger=0;this.missed=0;this.safePress=0;this.questionNo=0;this.answered=0;this.endId=null;this.endEvents=0;this.paused=false;this.question=null;this.flags={};this.trueEligible=Array.from({length:14},(_,i)=>i+1).every(id=>discovered.includes(id));
-  this.deck=new QuestionDeck(playNumber,this.rng);this.mode='intro';this.phaseStarted=now;this.deadline=now+(playNumber===1?6000:2000);this.cancelInput();this.emit('intro',{first:playNumber===1});
+  this.deck=new QuestionDeck(playNumber,this.rng);this.mode='intro';this.introLines=playNumber===1?FIRST_CHAT:RETRY_CHAT;this.introIndex=0;this.phaseStarted=now;this.deadline=now+2000;this.cancelInput();this.emit('intro',{first:playNumber===1});this.emitChat();
  }
- skipIntro(now){if(this.mode==='intro'&&!this.paused)this.nextQuestion(now)}
- nextQuestion(now){this.token++;this.cancelInput();this.questionNo++;this.question=this.deck.next(this.questionNo);this.mode='question';this.phaseStarted=now;this.deadline=now+durationFor(this.questionNo);this.emit('question',{question:this.question,number:this.questionNo,token:this.token})}
+ emitChat(){this.emit('chat',{line:this.introLines[this.introIndex],index:this.introIndex,total:this.introLines.length})}
+ advanceIntro(now,index=this.introIndex,serial=this.serial){if(this.mode!=='intro'||this.paused||index!==this.introIndex||serial!==this.serial)return false;this.introIndex++;if(this.introIndex>=this.introLines.length)this.nextQuestion(now);else{this.phaseStarted=now;this.deadline=now+2000;this.emitChat()}return true}
+ nextQuestion(now){this.token++;this.cancelInput();this.questionNo++;this.question=this.deck.next(this.questionNo);this.mode='question';this.phaseStarted=now;this.deadline=null;this.emit('question',{question:this.question,number:this.questionNo,token:this.token})}
  tick(now){
   if(this.paused)return;
-  if(this.mode==='intro'&&now>=this.deadline){this.nextQuestion(now);return}
+  if(this.mode==='intro'&&now>=this.deadline){this.advanceIntro(now);return}
   if(this.mode==='question'){
-   // Deadline wins at exactly the same instant as a release or long-press.
-   if(now>=this.deadline){this.cancelInput();this.judge(false,now);return}
    if(this.question.id==='HS-01'&&this.hold&&this.hold.token===this.token&&now-this.hold.at>=1500){this.finish(11,now);return}
   }
   if(this.mode==='feedback'&&now>=this.deadline)this.nextQuestion(now);
@@ -46,6 +44,7 @@ export class GameEngine{
   if(this.question.id==='HS-01'&&now-hold.at>=1500){this.finish(11,now);return true}
   this.judge(true,now);return true;
  }
+ choose(pressed,now,token=this.token){if(typeof pressed!=='boolean'||token!==this.token||this.paused||this.mode!=='question'||this.hold||this.secondHold)return false;return this.judge(pressed,now)}
  cancelInput(){this.hold=null;this.secondHold=null;this.lastTap=null}
  cancelPointer(pointerId){if(this.hold?.pointerId===pointerId)this.hold=null;if(this.secondHold?.pointerId===pointerId)this.secondHold=null}
  judge(pressed,now){if(this.mode!=='question'||this.endId||this.paused)return false;
@@ -64,6 +63,5 @@ export class GameEngine{
  }
  finish(id,now){if(this.endId)return;this.endId=id;this.endEvents++;this.mode='ending';this.phaseStarted=now;this.deadline=now+3000;this.token++;this.cancelInput();this.emit('ending',{id,score:this.score,maxCombo:this.maxCombo,answered:this.answered,mistakes:this.mistakes})}
  pause(now){if(this.paused||!['intro','question','feedback','ending'].includes(this.mode))return;this.tick(now);this.paused=true;this.pauseAt=now;this.cancelInput();this.emit('pause')}
- resume(now){if(!this.paused)return;const delta=Math.max(0,now-this.pauseAt);this.phaseStarted+=delta;this.deadline+=delta;this.paused=false;this.cancelInput();this.emit('resume')}
- progress(now){return Math.max(0,Math.min(1,(this.deadline-now)/(this.deadline-this.phaseStarted)))}
+ resume(now){if(!this.paused)return;const delta=Math.max(0,now-this.pauseAt);this.phaseStarted+=delta;if(this.deadline!==null)this.deadline+=delta;this.paused=false;this.cancelInput();this.emit('resume')}
 }
