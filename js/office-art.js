@@ -1,4 +1,4 @@
-import {drawPerson} from './art.js?v=office-5';
+import {drawPerson} from './art.js?v=office-6';
 const INK='#365851';
 function rr(c,x,y,w,h,r,fill,stroke=null,lw=1.5){c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke()}}
 function el(c,x,y,rx,ry,fill){c.beginPath();c.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),0,0,Math.PI*2);c.fillStyle=fill;c.fill()}
@@ -54,11 +54,12 @@ export class OfficeArt{
   const cupX=desk.x+desk.w*.48,cupY=desk.y-16*k;shadow(c,cupX,cupY+39*k,22*k,4*k);rr(c,cupX-13*k,cupY,26*k,38*k,7,'#e8d9b6','#b3a489');el(c,cupX,cupY,12*k,4*k,'#b09974');ln(c,[[cupX+12*k,cupY+7*k],[cupX+20*k,cupY+10*k],[cupX+20*k,cupY+22*k],[cupX+12*k,cupY+24*k]],'#c4b292',3*k);
   if(options.drag?.source!=='files')filesArt(c,b.files,state.folderOpen);
   trashArt(c,b.trash);if(options.drag?.source!=='cat')catArt(c,b.cat,time,options.selected==='cat');character(c,b.self,false,time,options.playerMood||'attentive');
+  if(state.loose&&b.looseButton){const body=state.loose,box=b.looseButton,cx=box.x+box.w/2,cy=box.y+box.h/2,r=box.w/2;shadow(c,cx,h-6,r*.9,5*k);c.save();c.translate(cx,cy);c.rotate(body.angle);el(c,0,3,r,r,'#985843');el(c,0,-2,r*.92,r*.92,grad(c,-r,-r,r*2,r*2,'#ffb280','#db7653'));el(c,-r*.2,-r*.5,r*.38,r*.13,'#ffdbb388');txt(c,'!',0,r*.28,r*1.1,'#793c31',900);c.restore()}
   const targets=options.drag?state.targetsFor(options.drag.source):[];
   for(const [id,box]of Object.entries(layout.hits)){
    const active=options.selected===id||targets.includes(id)||id==='self'&&state.trueEligible;
    if(active){c.save();c.shadowColor=targets.includes(id)?'#76b58b99':'#d6b76d66';c.shadowBlur=12;rr(c,box.x-6,box.y-6,box.w+12,box.h+12,12,'#fff9df08',targets.includes(id)?'#80ad83':id==='self'&&state.trueEligible?'#d7b468':'#dcbe7b',2.2);c.restore()}
-   if(!options.decorative){const pulse=.65+Math.sin(time*2+box.x)*.15;el(c,box.x+box.w-6,box.y+4,5,5,`rgba(244,247,220,${pulse})`);el(c,box.x+box.w-6,box.y+4,2,2,'#77a18a')}
+
   }
   if(options.drag){const source=b[options.drag.source];if(source&&['pc','files','cat','button'].includes(options.drag.source)){const moved={...source,x:options.drag.point.x-source.w/2,y:options.drag.point.y-source.h/2};shadow(c,options.drag.point.x,options.drag.point.y+source.h/2+18*k,source.w*.6,9*k);if(options.drag.source==='pc')pcArt(c,moved,state.portalOpen,state.lockTaps>0);if(options.drag.source==='files')filesArt(c,moved,true);if(options.drag.source==='cat')catArt(c,moved,time,true);if(options.drag.source==='button'){ln(c,[[source.x+source.w/2,source.y+source.h/2],[options.drag.point.x,options.drag.point.y]],'#ac8c61',3);buttonArt(c,moved,false,true,time)}}}
  }

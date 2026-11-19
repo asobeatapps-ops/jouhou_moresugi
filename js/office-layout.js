@@ -1,4 +1,4 @@
-export function makeLayout(width,height,giant=false){
+export function makeLayout(width,height,giant=false,loose=null){
  const wide=width>=700,w=wide?1100:720,h=w*height/width,k=Math.min(1,h/(wide?780:1100)),deskY=h*.60;
  const boxes=wide?{
   window:{x:65,y:48*k,w:335*k,h:235*k},fridge:{x:900,y:h*.60-260*k,w:132*k,h:260*k},
@@ -15,12 +15,13 @@ export function makeLayout(width,height,giant=false){
  };
  boxes.self.y=Math.min(boxes.self.y,h-boxes.self.h-25*k);
  if(giant){const b=boxes.button,cx=b.x+b.w/2,cy=b.y+b.h/2;boxes.button={x:cx-b.w*.88,y:cy-b.h*.88,w:b.w*1.76,h:b.h*1.76}}
+ if(loose){const q=w/720,r=loose.r*q;boxes.looseButton={x:loose.x*q-r,y:loose.y*q-r,w:r*2,h:r*2}}
  const desk={x:wide?190:78,y:deskY,w:wide?610:552,depth:72*k,k};
  const hits=Object.fromEntries(Object.entries(boxes).map(([id,b])=>[id,{...b,h:id==='boss'?b.h*.76:b.h}]));
  return{w,h,k,wide,boxes,hits,desk,scale:width/w,width,height};
 }
 export function hitObject(layout,point,exclude=null,pad=10){
- const order=['button','files','drawer','pc','cat','self','trash','boss','fridge','window'];
- return order.find(id=>{if(id===exclude)return false;const b=layout.hits[id];return point.x>=b.x-pad&&point.x<=b.x+b.w+pad&&point.y>=b.y-pad&&point.y<=b.y+b.h+pad})||null;
+ const order=['looseButton','button','files','drawer','pc','cat','self','trash','boss','fridge','window'];
+ return order.find(id=>{if(id===exclude)return false;const b=layout.hits[id];return b&& point.x>=b.x-pad&&point.x<=b.x+b.w+pad&&point.y>=b.y-pad&&point.y<=b.y+b.h+pad})||null;
 }
 export function toWorld(layout,rect,clientX,clientY){return{x:(clientX-rect.left)/layout.scale,y:(clientY-rect.top)/layout.scale}}
