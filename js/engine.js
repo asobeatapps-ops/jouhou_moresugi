@@ -1,5 +1,5 @@
-import {OBJECT_BY_ID,APP_ACTIONS,DROP_TARGETS,ENDING_COUNT,ENDS} from './data.js?v=office-7';
-import {ButtonPhysics,crossesRect} from './button-physics.js?v=office-7';
+import {OBJECT_BY_ID,APP_ACTIONS,DROP_TARGETS,ENDING_COUNT,ENDS} from './data.js?v=office-8';
+import {ButtonPhysics,crossesRect} from './button-physics.js?v=office-8';
 const APPS=new Set(APP_ACTIONS.map(a=>a.id));
 const HOLDS={send:1500,'app-lock':1200,'app-verify':1500};
 export class OfficeEngine{
