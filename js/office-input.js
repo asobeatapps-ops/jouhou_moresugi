@@ -1,5 +1,5 @@
-import {OBJECT_BY_ID} from './data.js?v=office-7';
-import {hitObject,toWorld} from './office-layout.js?v=office-7';
+import {OBJECT_BY_ID} from './data.js?v=office-8';
+import {hitObject,toWorld} from './office-layout.js?v=office-8';
 export function bindOfficeInput({root,canvas,engine,getLayout,onPreview=()=>{},onSelect=()=>{},onHover=()=>{}}){
  let active=null,key=null,carry=null,lastPhysical=-Infinity;const off=[];
  const listen=(el,event,fn)=>{el.addEventListener(event,fn);off.push(()=>el.removeEventListener(event,fn))};

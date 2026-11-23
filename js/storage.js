@@ -1,4 +1,4 @@
-import {ENDING_COUNT} from './data.js?v=office-7';
+import {ENDING_COUNT} from './data.js?v=office-8';
 export const STORAGE_KEY='asobeat_jouhou_moresugi_v1';
 const integer=(n,max=Number.MAX_SAFE_INTEGER)=>Number.isSafeInteger(n)&&n>=0&&n<=max?n:0;
 export function sanitize(value){const v=value&&typeof value==='object'?value:{};return{version:1,best:integer(v.best),maxCombo:integer(v.maxCombo),sound:typeof v.sound==='boolean'?v.sound:true,plays:integer(v.plays),discovered:[...new Set(Array.isArray(v.discovered)?v.discovered.filter(x=>Number.isInteger(x)&&x>=1&&x<=ENDING_COUNT):[])].sort((a,b)=>a-b),history:Array.isArray(v.history)?v.history.filter(x=>x&&Number.isInteger(x.end)&&x.end>=0&&x.end<=ENDING_COUNT).slice(-50).map(x=>({end:x.end,score:integer(x.score),combo:integer(x.combo),date:typeof x.date==='string'?x.date:''})):[]}}

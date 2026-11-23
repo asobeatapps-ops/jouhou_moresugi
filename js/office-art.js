@@ -1,4 +1,4 @@
-import {drawPerson} from './art.js?v=office-7';
+import {drawPerson} from './art.js?v=office-8';
 const INK='#365851';
 function rr(c,x,y,w,h,r,fill,stroke=null,lw=1.5){c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke()}}
 function el(c,x,y,rx,ry,fill){c.beginPath();c.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),0,0,Math.PI*2);c.fillStyle=fill;c.fill()}
